@@ -8,6 +8,8 @@
             string texto = Console.ReadLine();
             Tokenizer Prueba = new Tokenizer(texto);
             Prueba.Show_TokenSet();
+            Parser Syntax = new Parser(Prueba.TokenSet);
+            Syntax.Start();
             
         }
 

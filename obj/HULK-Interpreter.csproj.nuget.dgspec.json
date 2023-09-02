@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\RUBEN\\SCHOOL\\Compilador\\Interpreter\\HULK-Interpreter\\HULK-Interpreter.csproj": {}
+    "c:\\RUBEN\\SCHOOL\\Compilador\\9.2.2023\\HULK-Interpreter\\HULK-Interpreter.csproj": {}
   },
   "projects": {
-    "C:\\RUBEN\\SCHOOL\\Compilador\\Interpreter\\HULK-Interpreter\\HULK-Interpreter.csproj": {
+    "c:\\RUBEN\\SCHOOL\\Compilador\\9.2.2023\\HULK-Interpreter\\HULK-Interpreter.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\RUBEN\\SCHOOL\\Compilador\\Interpreter\\HULK-Interpreter\\HULK-Interpreter.csproj",
+        "projectUniqueName": "c:\\RUBEN\\SCHOOL\\Compilador\\9.2.2023\\HULK-Interpreter\\HULK-Interpreter.csproj",
         "projectName": "HULK-Interpreter",
-        "projectPath": "C:\\RUBEN\\SCHOOL\\Compilador\\Interpreter\\HULK-Interpreter\\HULK-Interpreter.csproj",
+        "projectPath": "c:\\RUBEN\\SCHOOL\\Compilador\\9.2.2023\\HULK-Interpreter\\HULK-Interpreter.csproj",
         "packagesPath": "C:\\Users\\ruben\\.nuget\\packages\\",
-        "outputPath": "C:\\RUBEN\\SCHOOL\\Compilador\\Interpreter\\HULK-Interpreter\\obj\\",
+        "outputPath": "c:\\RUBEN\\SCHOOL\\Compilador\\9.2.2023\\HULK-Interpreter\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ruben\\AppData\\Roaming\\NuGet\\NuGet.Config"
