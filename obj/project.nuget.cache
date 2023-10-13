@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "i8slUSQwz8x8mrY8mjIrxLvK70CSSwJiCGgzp/TcVGbgYf/R3NyOMoWlXPPz5DR+H9gdqHVMbgMNvJTvrPBP4Q==",
+  "dgSpecHash": "Xi14LwiW0zyRVEslPsZGKN2PI1oShjDqqRRwWBSj2sV/f5thAzCioaV8PSjXK8B2Nc9W8YGP1VdEmj+nlCRsHw==",
   "success": true,
-  "projectFilePath": "c:\\RUBEN\\SCHOOL\\Compilador\\9.2.2023\\HULK-Interpreter\\HULK-Interpreter.csproj",
+  "projectFilePath": "C:\\RUBEN\\SCHOOL\\Compilador\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

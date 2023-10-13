@@ -9,10 +9,24 @@ public enum TokenType
     CONCAT_OPERATOR, // @
     RIGHT_PARENTHESIS,// (
     LEFT_PARENTHESIS,// )
+    Asignation_Operator,// =
+    Equal_Operator,// ==
+    Distinct,// /!=
+    More_Than, //>
+    More_Equal_Than, //>=
+    Min_Than,// <
+    And_Operator,// &
+    Or_Operator,// ||
+    Min_Equal_Than,// <=
+    Arrow, //=>
     Identifier, // todos los nombres
     Keyword, //Las palabras reservadas, number, string, bool, let, in, 
+    Function_Keyword, //function
+    Let_Keyword,//let
+    In_Keyword,//in
     Bool_True,
     Bool_False,
+    Comma, //,
     Semicolon, //;
     Quotes_Text, // "mm"
     Blank_Space,// " "
@@ -47,7 +61,8 @@ public class Tokenizer
     public int text_size;
     public TokenType actual_Tokentype { get; set; }
 
-    public string[] Keywords = { "let", "in", "number", "string", "bool", "if", "else" };
+    public string[] Keywords = { "let", "in", "number", "string", "bool", "if", "else", "function",
+    "sqrt","cos","sin","exp","log","rand", "print"};
     public string actual_TokenValue { get; set; }
     public Token actual_Token { get; set; }
     public Tokenizer(string text)
@@ -73,22 +88,116 @@ public class Tokenizer
     {
         while (position < text_size)
         {
-            AddToken();
+            Add_Simple_Token();
         }
     }
 
-    public void AddToken()
+    public void Add_Simple_Token(){
+        
+        switch (actual_char)
+        {
+            case ';':
+
+            System.Console.WriteLine("Entro a que es un punto y coma");
+            Add_To_TokenSet(TokenType.Semicolon, ';');
+            GetNextChar();
+
+            break;
+            
+            case ',':
+        
+            System.Console.WriteLine("Entro a que es una coma");
+            Add_To_TokenSet(TokenType.Comma, ',');
+            GetNextChar();
+
+            break;
+            case ' ':
+        
+            System.Console.WriteLine("Entro a que es un espacio");
+            actual_Tokentype = TokenType.Blank_Space;
+            GetNextChar();
+            break;
+
+        case '+':
+        
+            System.Console.WriteLine("Entro a que es un operador");
+            Add_To_TokenSet(TokenType.SUM_Operator, actual_char);
+            GetNextChar();
+        break;
+        case '-':
+        
+            System.Console.WriteLine("Entro a que es un operador");
+            Add_To_TokenSet(TokenType.REST_Operator, actual_char);
+            GetNextChar();
+        break;
+        
+        case '/':
+        
+            System.Console.WriteLine("Entro a que es un operador");
+            Add_To_TokenSet(TokenType.DIV_Operator, actual_char);
+            GetNextChar();
+        
+        break;
+        case '*': 
+        
+            System.Console.WriteLine("Entro a que es un operador");
+            Add_To_TokenSet(TokenType.MULT_Operator, actual_char);
+            GetNextChar();
+        break;
+        case '(': 
+            System.Console.WriteLine("Entro a que es un parentesis izquierdo");
+            Add_To_TokenSet(TokenType.LEFT_PARENTHESIS, actual_char);
+            GetNextChar();
+
+        break;
+        case ')':
+        
+            System.Console.WriteLine("Entro a que es un parentesis derecho");
+            Add_To_TokenSet(TokenType.RIGHT_PARENTHESIS, actual_char);
+            GetNextChar();
+
+        break;
+        case '^': 
+        
+            System.Console.WriteLine("Entro a que es el simbolo de potencia");
+            Add_To_TokenSet(TokenType.POW_Operator, actual_char);
+            GetNextChar();
+
+        break;
+        case '@': 
+        
+            System.Console.WriteLine("Entro a que es el operador de concatenar texto");
+            Add_To_TokenSet(TokenType.CONCAT_OPERATOR, actual_char);
+            GetNextChar();
+
+        break;
+        default:
+        Add_Compose_Token();
+        break;
+        }
+        
+    }
+
+    public void Add_To_TokenSet(TokenType Type, object Value){
+        Token Element = new Token(Type,Value);
+        TokenSet.Add(Element);
+
+    }
+
+    public void Add_Compose_Token()
     {
         if (Char.IsDigit(actual_char))
         {
             System.Console.WriteLine("Entro a que es un digito");
             actual_TokenValue = "";
             actual_Tokentype = TokenType.Number;
+            
             while (position < text_size && Char.IsDigit(actual_char))
             {
                 actual_TokenValue += actual_char;
                 GetNextChar();
             }
+
             if (Char.IsLetter(actual_char))
             {
                 System.Console.WriteLine("Error, there should be a number");
@@ -96,16 +205,8 @@ public class Tokenizer
                 //Porque hubo un error
                 return;
             }
-            actual_Token = new Token(actual_Tokentype, actual_TokenValue);
 
-            TokenSet.Add(actual_Token);
-        }
-        else if (actual_char == ';')
-        {
-            System.Console.WriteLine("Entro a que es un punto y coma");
-            actual_Token = new Token(TokenType.Semicolon, ';');
-            TokenSet.Add(actual_Token);
-            GetNextChar();
+            Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
         }
         else if (actual_char == '"')
         {
@@ -123,18 +224,10 @@ public class Tokenizer
                 System.Console.WriteLine("Error, falta " + '"');
                 return;
             }
-            else
-            {
-                actual_Token = new Token(actual_Tokentype, actual_TokenValue);
-                TokenSet.Add(actual_Token);
-                GetNextChar();
-            }
-        }
-        else if (actual_char == ' ')
-        {
-            System.Console.WriteLine("Entro a que es un espacio");
-            actual_Tokentype = TokenType.Blank_Space;
+
+            Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
             GetNextChar();
+            
         }
         else if (actual_char == '_')
         {
@@ -142,13 +235,14 @@ public class Tokenizer
             actual_TokenValue = "" + actual_char;
             actual_Tokentype = TokenType.Identifier;
             GetNextChar();
+            
             while (position < text_size && (Char.IsLetterOrDigit(actual_char) || actual_char == '_'))
             {
                 actual_TokenValue += actual_char;
                 GetNextChar();
             }
-            actual_Token = new Token(actual_Tokentype, actual_TokenValue);
-            TokenSet.Add(actual_Token);
+
+            Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
         }
         else if (Char.IsLetter(actual_char))
         {
@@ -156,124 +250,135 @@ public class Tokenizer
             System.Console.WriteLine("Entro a que es una letra");
             actual_TokenValue = "" + actual_char;
             GetNextChar();
+            
             while (position < text_size && (Char.IsLetterOrDigit(actual_char) || actual_char == '_'))
             {
                 if (actual_char == '_') comprobando = false;
                 actual_TokenValue += actual_char;
                 GetNextChar();
             }
+            System.Console.WriteLine("Comprobando es "+comprobando+ " y el valor de ItsKeyword es "+ItsKeyword(actual_TokenValue));
 
-            if (comprobando && ItsKeyword(actual_Tokentype))
-            {System.Console.WriteLine("Entro a que es Keyword y el valor de ItsNotKeyword es "+ItsKeyword(actual_Tokentype));
-                actual_Tokentype = TokenType.Keyword;
-                actual_Token = new Token(actual_Tokentype, actual_TokenValue);
-                TokenSet.Add(actual_Token);
-            }
-            else if (comprobando || Convert.ToString(actual_TokenValue) == "true")
+            if (comprobando && ItsKeyword(actual_TokenValue))
             {
-                actual_Tokentype = TokenType.Bool_True;
-                actual_Token = new Token(actual_Tokentype, actual_TokenValue);
-                TokenSet.Add(actual_Token);
+                System.Console.WriteLine("Entro a que es Keyword y el valor de ItsNotKeyword es " + ItsKeyword(actual_TokenValue));
+
+                if (actual_TokenValue == "let") Add_To_TokenSet(TokenType.Let_Keyword, actual_TokenValue);
+
+                else if (actual_TokenValue == "in") Add_To_TokenSet(TokenType.In_Keyword, actual_TokenValue);
+
+                else if(actual_TokenValue == "function"){
+                Add_To_TokenSet(TokenType.Function_Keyword, actual_TokenValue);
+                Add_Function();
+                }   
+                
+                else Add_To_TokenSet(TokenType.Keyword, actual_TokenValue);
+
             }
-            else if (comprobando || Convert.ToString(actual_TokenValue) == "true")
+            else if (comprobando && Convert.ToString(actual_TokenValue) == "true") 
+            Add_To_TokenSet(TokenType.Bool_True, actual_TokenValue);
+                
+            
+            else if (comprobando && Convert.ToString(actual_TokenValue) == "false")
+            Add_To_TokenSet(TokenType.Bool_False, actual_TokenValue);
+
+            else
+            Add_To_TokenSet(TokenType.Identifier, actual_TokenValue);
+            
+
+        }
+        else if (actual_char == '=')
+        {
+            if (IsThat('='))
             {
-                actual_Tokentype = TokenType.Bool_False;
-                actual_Token = new Token(actual_Tokentype, actual_TokenValue);
-                TokenSet.Add(actual_Token);
+                GetNextChar();
+                actual_TokenValue = "==";
+                Add_To_TokenSet(TokenType.Equal_Operator, actual_TokenValue);
+                GetNextChar();
+
+            }
+            else if (IsThat('>'))
+            {
+                GetNextChar();
+                actual_TokenValue = "=>";
+                Add_To_TokenSet(TokenType.Arrow, actual_TokenValue);
+                GetNextChar();
 
             }
             else
             {
-                actual_Tokentype = TokenType.Identifier;
-                actual_Token = new Token(actual_Tokentype, actual_TokenValue);
-                TokenSet.Add(actual_Token);
+                actual_TokenValue = "=";
+                Add_To_TokenSet(TokenType.Asignation_Operator, actual_TokenValue);
+                GetNextChar();
+
             }
-
         }
-        else if (actual_char == '+')
+        else if (actual_char == '!')
         {
-            System.Console.WriteLine("Entro a que es un operador");
-            actual_Tokentype = TokenType.SUM_Operator;
+            if (IsThat('='))
+            {
 
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
+                GetNextChar();
+                actual_TokenValue = "!=";
+                Add_To_TokenSet(TokenType.Distinct, actual_TokenValue);
+                GetNextChar();
+
+            }else System.Console.WriteLine("Error por ahora");
         }
-        else if (actual_char == '-')
+        else if (actual_char == '>')
         {
-            System.Console.WriteLine("Entro a que es un operador");
-            actual_Tokentype = TokenType.REST_Operator;
+            if (IsThat('='))
+            {
+                GetNextChar();
+                actual_TokenValue = ">=";
+                Add_To_TokenSet(TokenType.More_Equal_Than, actual_TokenValue);
+                GetNextChar();
 
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
+            }
+            else
+            {
+                actual_TokenValue = ">";
+                Add_To_TokenSet(TokenType.More_Than, actual_TokenValue);
+                GetNextChar();
+            }
         }
-        else if (actual_char == '/')
+        else if (actual_char == '<')
         {
-            System.Console.WriteLine("Entro a que es un operador");
-            actual_Tokentype = TokenType.DIV_Operator;
+            if (IsThat('='))
+            {
+                GetNextChar();
+                actual_TokenValue = "<=";
+                Add_To_TokenSet(TokenType.Min_Equal_Than, actual_TokenValue);
+                GetNextChar();
 
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
+            }
+            else
+            {
+                actual_TokenValue = "" + actual_char;
+                Add_To_TokenSet(TokenType.Min_Than, actual_TokenValue);
+                GetNextChar();
+            }
         }
-        else if (actual_char == '*')
-        {
-            System.Console.WriteLine("Entro a que es un operador");
-            actual_Tokentype = TokenType.MULT_Operator;
-
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
-        }
-        else if (actual_char == '(')
-        {
-            System.Console.WriteLine("Entro a que es un parentesis izquierdo");
-            actual_Tokentype = TokenType.LEFT_PARENTHESIS;
-
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
-        }
-        else if (actual_char == ')')
-        {
-            System.Console.WriteLine("Entro a que es un parentesis derecho");
-            actual_Tokentype = TokenType.RIGHT_PARENTHESIS;
-
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
-        }
-        else if (actual_char == '^')
-        {
-            System.Console.WriteLine("Entro a que es el simbolo de potencia");
-            actual_Tokentype = TokenType.POW_Operator;
-
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
-
-        }
-        else if (actual_char == '@')
-        {
-
-            System.Console.WriteLine("Entro a que es el operador de concatenar texto");
-            actual_Tokentype = TokenType.CONCAT_OPERATOR;
-
-            actual_Token = new Token(actual_Tokentype, actual_char);
-            TokenSet.Add(actual_Token);
-            GetNextChar();
-
-        }
-
 
     }
-    public bool ItsKeyword(TokenType token)
+
+    public void Add_Function(){
+        
+    }
+    public bool IsThat(char possible)
+    {
+        if (position + 1 != text_size && possible == Text[position + 1])
+        {
+            return true;
+        }
+        return false;
+    }
+    public bool ItsKeyword(string token)
     {//Es un metodo que devuelve verdadero si la palabra es una Keyword
-        string word = token.ToString();
+        System.Console.WriteLine("la palabra es "+token);
         foreach (var item in Keywords)
         {
-            if (word == item)
+            if (token == item)
             {
                 return true;
             }
