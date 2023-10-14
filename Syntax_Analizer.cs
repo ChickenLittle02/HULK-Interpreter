@@ -1,18 +1,16 @@
-using System.Globalization;
-
-class Function
+class Funciones
 {
     string Name { get; set; }
     List<string> Variables { get; set; }
     List<Token> Tokens_Body { get; set; }
-    public Function(string name, List<string> variables, List<Token> tokens_body)
+    public Funciones(string name, List<string> variables, List<Token> tokens_body)
     {
         Name = name;
         Variables = variables;
         List<Token> Tokens_Body = tokens_body;
     }
 }
-class Parser
+class Parsereando
 {
     List<Token> Token_Set { get; set; }
     Token actual_token { get; set; }
@@ -31,7 +29,7 @@ class Parser
     {
         throw new Exception("Invalid syntax");
     }
-    public Parser(List<Token> token_Set)
+    public Parsereando(List<Token> token_Set)
     {
         Token_Set = token_Set;
         position = 0;
@@ -51,7 +49,17 @@ class Parser
     public void Start()
     {
         object result = Expression();
+        System.Console.WriteLine("El resultado es ");
         System.Console.WriteLine(result);
+
+        if (position == size)
+        {
+            System.Console.WriteLine("Parser exitoso");
+        }
+        else
+        {
+            System.Console.WriteLine("Salio mal algo");
+        }
     }
     
     private void Add_Function()
@@ -156,9 +164,9 @@ class Parser
         if (Operador < Bool_Oper.Length)
         {
 
-            //System.Console.WriteLine("Dice que es el operador " + Bool_Oper[Operador]);
+            System.Console.WriteLine("Dice que es el operador " + Bool_Oper[Operador]);
         }
-//        else { System.Console.WriteLine("No es ninguno de los operadores booleanos"); }
+        else { System.Console.WriteLine("No es ninguno de los operadores booleanos"); }
         while (Operador < Bool_Oper.Length)
         {
             if (Operador == 0)
@@ -246,9 +254,9 @@ class Parser
             }
             if (Operador == 4)
             {
-   //             System.Console.WriteLine("El tipo de Token es " + actual_token.Type);
+                System.Console.WriteLine("El tipo de Token es " + actual_token.Type);
                 Eat(TokenType.Min_Than);
-     //           System.Console.WriteLine("Llego aqui e este punto");
+                System.Console.WriteLine("Llego aqui e este punto");
                 object result2 = Text();
                 if (result2 is int && result is int)
                 {
@@ -394,7 +402,7 @@ class Parser
             return result;
         }
         else if (actual_token.Value.ToString() == "if")
-        { //System.Console.WriteLine("Entro a que es un if");
+        { System.Console.WriteLine("Entro a que es un if");
 
             Eat(TokenType.Keyword);
             object decision = Expression();
@@ -417,9 +425,9 @@ class Parser
             variable_subset++;
             Eat(TokenType.In_Keyword);
             object result = Expression();
-  //          System.Console.WriteLine("No he eliminado las variables");
+            System.Console.WriteLine("No he eliminado las variables");
             Variables_Set.RemoveAt(variable_subset);
-      //      System.Console.WriteLine("Ya eliminé las variables");
+            System.Console.WriteLine("Ya eliminé las variables");
             variable_subset--;
             return result;
 
@@ -429,21 +437,21 @@ class Parser
             Eat(TokenType.Identifier);
             //Comprobar si es una variable
             int i = 0;
-            // foreach (var item in Variables_Set)
-            // {
-            //    System.Console.WriteLine(i);
-            //     foreach (var variable in item)
-            //     {
-            //        System.Console.WriteLine(variable.Key + "   " + variable.Value);
-            //     }
-            //     i++;
-            // }
+            foreach (var item in Variables_Set)
+            {
+                System.Console.WriteLine(i);
+                foreach (var variable in item)
+                {
+                    System.Console.WriteLine(variable.Key + "   " + variable.Value);
+                }
+                i++;
+            }
 
-      //      System.Console.WriteLine("Quejeto");
+            System.Console.WriteLine("Quejeto");
             (object, bool) Existence = Check_Var_Existence();
             if (Existence.Item2)
             {
-           //     System.Console.WriteLine("la variable es " + Existence.Item1);
+                System.Console.WriteLine("la variable es " + Existence.Item1);
                 return Existence.Item1;
             }
             else
@@ -516,7 +524,7 @@ class Parser
 
             if (Variables_Set[i].ContainsKey(actual_token_value.ToString()))
             {
-          //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
+                System.Console.WriteLine(actual_token_value + "  existe en " + i);
                 return (Variables_Set[i][actual_token_value.ToString()], true);
             }
 
@@ -607,7 +615,7 @@ class Parser
 
     private void Eat(TokenType Type)
     {
-    //    System.Console.WriteLine(actual_token.Type + "  " + actual_token.Value + " type debe ser " + Type);
+        System.Console.WriteLine(actual_token.Type + "  " + actual_token.Value + " type debe ser " + Type);
         if (Type == actual_token.Type)
         {
             actual_token_value = actual_token.Value;
