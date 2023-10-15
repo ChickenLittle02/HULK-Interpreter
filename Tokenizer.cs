@@ -45,7 +45,7 @@ public class Token
     }
     public void Show()
     {
-        //System.Console.WriteLine("(" + Type + "," + Value + ")");
+        System.Console.WriteLine("(" + Type + "," + Value + ")");
     }
 }
 

@@ -4,6 +4,7 @@
     {
         public static void Main(string[] args)
         {
+            Dictionary<string, Function> Saving_Functions = new Dictionary<string, Function>();
             while(true){
                 
             System.Console.Write("> ");
@@ -17,9 +18,11 @@
             }
             try{
             Tokenizer Prueba = new Tokenizer(texto);
-            Prueba.Show_TokenSet();
-            Parser Syntax = new Parser(Prueba.TokenSet);
-            Syntax.Start();
+            //Prueba.Show_TokenSet();
+            Parser Syntax = new Parser(Prueba.TokenSet, Saving_Functions);
+            object result = Syntax.Start();
+            Saving_Functions = Syntax.Get_New_Functions();
+            System.Console.WriteLine(result);
             }catch(Exception text)
             {
                 System.Console.WriteLine(text);

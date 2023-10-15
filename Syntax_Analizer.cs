@@ -73,7 +73,7 @@ class Parsereando
         Eat(TokenType.RIGHT_PARENTHESIS);
         Eat(TokenType.Arrow);
         List<Token> body = Make_Body();
-        Function New = new Function(name, Var, body);
+        Funciones New = new Funciones(name, Var, body);
         Function_State.Add((name,1));
 
     }

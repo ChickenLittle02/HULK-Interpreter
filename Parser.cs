@@ -1,15 +1,33 @@
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 class Function
 {
-    string Name { get; set; }
-    List<string> Variables { get; set; }
-    List<Token> Tokens_Body { get; set; }
-    public Function(string name, List<string> variables, List<Token> tokens_body)
+    public List<string> Variables { get; set; }
+    public List<Token> Tokens_Body { get; set; }
+    public Function(List<string> variables, List<Token> tokens_body)
     {
-        Name = name;
         Variables = variables;
-        List<Token> Tokens_Body = tokens_body;
+        Tokens_Body = tokens_body;
+    }
+
+    public void Show_Variables(){
+        
+        System.Console.WriteLine("Variables");
+        System.Console.WriteLine(" ");
+        foreach (var item in this.Variables)
+        {
+            System.Console.WriteLine(item);
+        }
+    }
+
+    public void Show_Body(){
+        System.Console.WriteLine("Body");
+        System.Console.WriteLine(" "+this.Tokens_Body.Count);
+        foreach (var item in this.Tokens_Body)
+        {
+            item.Show();
+        }
     }
 }
 class Parser
@@ -20,13 +38,18 @@ class Parser
     private int position { get; set; }
     int size { get; set; }
     List<Dictionary<string, object>> Variables_Set { get; set; }
-    List<Function> New_Functions = new List<Function>();
+    Dictionary<string, Function> New_Functions { get; set;}
     //Aqui se encuentran todas las funciones agregadas
+    
+    public Dictionary<string, Function> Get_New_Functions(){
+        Dictionary<string, Function> Copy = New_Functions;
+        return New_Functions;
+    }
+    
     List<string> Function_State = new List<string>
     {"sqrt","cos","sin","exp","log","rand"};
     //FUnction_State me dice el estado de la funcion, si es 0 es xq es del sistema y si es 1 es porque la agregué
 
-    Dictionary<string, string> Function_Set;
 
     int variable_subset { get; set; }
     private void Error()
@@ -37,13 +60,47 @@ class Parser
     {
         throw new Exception(message);
     }
-    public Parser(List<Token> token_Set)
+    public Parser(List<Token> token_Set, Dictionary<string,object> Var_Subset,Dictionary<string, Function> new_functions)
+    {
+        Token_Set = token_Set;
+        position = 0;
+        size = Token_Set.Count();
+        Variables_Set = new List<Dictionary<string, object>>
+        {
+            Var_Subset
+        };
+
+        variable_subset = 0;
+
+        New_Functions = new_functions;
+        Renovando_Funciones();
+        if (position != size)
+        {
+            actual_token = Token_Set[position];
+        }
+        else
+        {
+            actual_token = null;
+        }
+    }
+    private void Renovando_Funciones(){
+        if(New_Functions.Count!=0){
+            foreach (var item in New_Functions)
+            {
+                Function_State.Add(item.Key);
+            }
+        }
+    }
+
+        public Parser(List<Token> token_Set, Dictionary<string, Function> new_functions)
     {
         Token_Set = token_Set;
         position = 0;
         size = Token_Set.Count();
         Variables_Set = new List<Dictionary<string, object>>();
         variable_subset = -1;
+        New_Functions = new_functions;
+        Renovando_Funciones();
         if (position != size)
         {
             actual_token = Token_Set[position];
@@ -54,11 +111,24 @@ class Parser
         }
     }
 
-    public void Start()
+
+    public object Start()
     {
-        object result = Expression();
-        System.Console.WriteLine(result);
-    }
+        object result;
+        if(actual_token.Type!= TokenType.Function_Keyword) result = Expression();
+        else{
+            Add_Function();
+            foreach (var item in New_Functions)
+            {
+              System.Console.WriteLine("La funcion es "+item.Key);
+                item.Value.Show_Variables();
+                item.Value.Show_Body();
+            }
+            result = "Funcion agregada con éxito";
+        }
+
+        return result;
+        }
 
     private void Add_Function()
     {//las estricturas de las funciones son
@@ -66,14 +136,32 @@ class Parser
         Eat(TokenType.Function_Keyword);
         Eat(TokenType.Identifier);
         string name = actual_token_value.ToString();
+        bool Ya_Agregada = New_Functions.ContainsKey(name);
+
+        if(Function_State.Contains(name)&&(!Ya_Agregada)) Error("Ya existe una función del sistema con ese nombre");
+
+        if(Ya_Agregada){
+            System.Console.WriteLine("Ya existe una función con este mismo nombre, desea sobreescribirla");
+            System.Console.WriteLine("Toque Enter para confrimar, o N si no desea sobreescribirla");
+            string decision = Console.ReadLine();
+            
+            if(decision=="") Error("No fue agregada su funcion");
+           // else Elimina el elemento del diccionario 
+        }
+        //Si esta condicion se cumple es porque es una funcion del sistema
+        
         Eat(TokenType.LEFT_PARENTHESIS);
         List<string> Var = Function_Variables();
         Eat(TokenType.RIGHT_PARENTHESIS);
         Eat(TokenType.Arrow);
         List<Token> body = Make_Body();
-        Function New = new Function(name, Var, body);
-        New_Functions.Add(New);
+        Function New = new Function(Var, body);
+        New_Functions.Add(name,New);
         Function_State.Add(name);
+        System.Console.WriteLine("Function_State.Count"+Function_State.Count);
+        foreach (var item in Function_State){
+            System.Console.WriteLine(item);
+        }
 
     }
     private List<string> Function_Variables()
@@ -107,7 +195,8 @@ class Parser
         if (actual_token.Type == TokenType.EOT) Error("EL útlimo token debe ser un punto y coma");
 
         Token_Body.Add(actual_token);
-
+        
+        System.Console.WriteLine("TOken_Body tiene "+Token_Body.Count+"elementos");
         GetNextToken();
 
         return Token_Body;
@@ -437,7 +526,8 @@ class Parser
             Eat(TokenType.Identifier);
             //Comprobar si es una funcion
             //      System.Console.WriteLine("Quejeto");
-
+            System.Console.WriteLine("Antes de comprobar lo del parentesis para entrar en que sea o no una funcion");
+            actual_token.Show();
             if (IsNext(TokenType.LEFT_PARENTHESIS))
             {
                 //Es porque es una funcion
@@ -478,12 +568,8 @@ class Parser
 
     private bool IsNext(TokenType Expected_Type)
     {
-        if (position + 1 < Token_Set.Count && Token_Set[position + 1].Type == Expected_Type)
-        {
-            return true;
-        }
-
-        return false;
+        System.Console.WriteLine(Expected_Type);
+        return actual_token.Type==Expected_Type;
     }
 
     private Dictionary<string, object> Variables_Subset()
@@ -535,9 +621,10 @@ class Parser
 
     bool Check_Function_Existence()
     {
-        for (int i = Function_State.Count; i >= 0; i--)
+        System.Console.WriteLine("Function_State "+Function_State.Count);
+        for (int i = Function_State.Count-1; i >= 0; i--)
         {
-
+            System.Console.WriteLine(Function_State[i]);
             if (Function_State[i] == actual_token_value.ToString())
             {
                 //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
@@ -633,14 +720,50 @@ class Parser
                 return 0;
 
             default:
-                // Eat(TokenType.LEFT_PARENTHESIS);
+                Eat(TokenType.LEFT_PARENTHESIS);
+                
                 //Que me parsee las variables y por cada una que parsee guarde la cantidad, si son diferentes
                 //del lenght de la lista de variables que lance un error porque solo pueden haber n variables
-                // Eat(TokenType.RIGHT_PARENTHESIS);
-                //Ahora con las variables procesa el cuerpo de la funcion                
-                return "nameof";
+                
+                Dictionary<string, object> Function_Variables = Make_Function_Variables(function_name);
+                Eat(TokenType.RIGHT_PARENTHESIS);
+
+                System.Console.WriteLine("Llego a aaqui ");
+                System.Console.WriteLine("Variables de la funcion");
+                foreach(var item in Function_Variables){
+                    System.Console.WriteLine(item.Key+"  "+item.Value);
+                }               
+                //Ahora con las variables procesa el cuerpo de la funcion
+                Parser Parse_Function = new Parser(New_Functions[function_name].Tokens_Body,Function_Variables, New_Functions);
+                object result = Parse_Function.Start();
+                return result;
+                
 
         }
+    }
+
+
+    private Dictionary<string, object> Make_Function_Variables(string name){
+        Dictionary<string,object> Function_Variables = new Dictionary<string, object>();
+        List<object> Values = new List<object>();
+        object var_value = Expression();
+        Values.Add(var_value);
+        while(actual_token.Type==TokenType.Comma)
+        {
+            Eat(TokenType.Comma);
+            var_value = Expression();
+            Values.Add(var_value);
+        }
+        int total_var = New_Functions[name].Variables.Count;
+        
+        if(total_var!=Values.Count) Error("La funcion "+name+" tiene que tener "+total_var+" variables en su declaracion");
+        
+        for(int i = 0; i<total_var; i++){
+            Function_Variables.Add(New_Functions[name].Variables[i],Values[i]);
+        }
+
+        return Function_Variables;
+
     }
 
 
