@@ -65,6 +65,11 @@ public class Tokenizer
     "sqrt","cos","sin","exp","log","rand", "print"};
     public string actual_TokenValue { get; set; }
     public Token actual_Token { get; set; }
+    private void Error(string message)
+    {
+        throw new Exception(message);
+    }
+
     public Tokenizer(string text)
     {
         text_size = text.Length;
@@ -327,7 +332,7 @@ public class Tokenizer
                 GetNextChar();
 
             }
-            // else System.Console.WriteLine("Error por ahora");
+            else Error(actual_char+" No es un token valido");
         }
         else if (actual_char == '>')
         {
@@ -362,8 +367,10 @@ public class Tokenizer
                 Add_To_TokenSet(TokenType.Min_Than, actual_TokenValue);
                 GetNextChar();
             }
-        }
-
+        }else{
+            Error(actual_char+" No es un token válido");
+        }          
+            
     }
 
     public void Add_Function()

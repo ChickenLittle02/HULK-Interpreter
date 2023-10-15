@@ -20,16 +20,22 @@ class Parser
     private int position { get; set; }
     int size { get; set; }
     List<Dictionary<string, object>> Variables_Set { get; set; }
-    List<string> Total_Functions = new List<string> { };
+    List<Function> New_Functions = new List<Function>();
+    //Aqui se encuentran todas las funciones agregadas
+    List<string> Function_State = new List<string>
+    {"sqrt","cos","sin","exp","log","rand"};
     //FUnction_State me dice el estado de la funcion, si es 0 es xq es del sistema y si es 1 es porque la agregué
-    List<(string, int)> Function_State = new List<(string, int)>
-    {("sqrt",0),("cos",0),("sin",0),("exp",0),("log",0),("rand",0)};
+
     Dictionary<string, string> Function_Set;
 
     int variable_subset { get; set; }
     private void Error()
     {
         throw new Exception("Invalid syntax");
+    }
+    private void Error(string message)
+    {
+        throw new Exception(message);
     }
     public Parser(List<Token> token_Set)
     {
@@ -53,7 +59,7 @@ class Parser
         object result = Expression();
         System.Console.WriteLine(result);
     }
-    
+
     private void Add_Function()
     {//las estricturas de las funciones son
      //function nombre_funcion(variables) => cuerpo_funcion;
@@ -66,7 +72,8 @@ class Parser
         Eat(TokenType.Arrow);
         List<Token> body = Make_Body();
         Function New = new Function(name, Var, body);
-        Function_State.Add((name,1));
+        New_Functions.Add(New);
+        Function_State.Add(name);
 
     }
     private List<string> Function_Variables()
@@ -97,7 +104,7 @@ class Parser
             GetNextToken();
         }
 
-        if (actual_token.Type == TokenType.EOT) Error();
+        if (actual_token.Type == TokenType.EOT) Error("EL útlimo token debe ser un punto y coma");
 
         Token_Body.Add(actual_token);
 
@@ -127,12 +134,12 @@ class Parser
                     }
                     else
                     {
-                        Error();
+                        Error("Seguido de un operador de && o || debe existir una expresion que devuelva true o false");
                     }
                 }
                 else
                 {
-                    Error();
+                    Error("Antes de un operador de && o || debe existir una expresion que devuelva true o false");
                 }
             }
         }
@@ -158,7 +165,7 @@ class Parser
 
             //System.Console.WriteLine("Dice que es el operador " + Bool_Oper[Operador]);
         }
-//        else { System.Console.WriteLine("No es ninguno de los operadores booleanos"); }
+        //        else { System.Console.WriteLine("No es ninguno de los operadores booleanos"); }
         while (Operador < Bool_Oper.Length)
         {
             if (Operador == 0)
@@ -171,9 +178,9 @@ class Parser
                     {
                         result = Convert.ToString(result) == Convert.ToString(result2);
                     }
-                    else if (result is int)
+                    else if (result is double)
                     {
-                        result = Convert.ToInt32(result) == Convert.ToInt32(result2);
+                        result = Convert.ToDouble(result) == Convert.ToDouble(result2);
                     }
                     else
                     {
@@ -183,7 +190,7 @@ class Parser
                 }
                 else
                 {
-                    Error();
+                    Error("No se pueden comparar expresiones de tipos diferentes");
                 }
             }
 
@@ -191,6 +198,7 @@ class Parser
             {
                 Eat(TokenType.Distinct);
                 object result2 = Text();
+
                 if (result2.GetType() == result.GetType())
                 {
 
@@ -198,9 +206,9 @@ class Parser
                     {
                         result = Convert.ToString(result) != Convert.ToString(result2);
                     }
-                    else if (result is int)
+                    else if (result is double)
                     {
-                        result = Convert.ToInt32(result) != Convert.ToInt32(result2);
+                        result = Convert.ToDouble(result) != Convert.ToDouble(result2);
 
                     }
                     else
@@ -213,65 +221,65 @@ class Parser
                 }
                 else
                 {
-                    Error();
+                    Error("No se pueden comparar expresiones de tipos diferentes");
                 }
             }
             if (Operador == 2)
             {
                 Eat(TokenType.More_Than);
                 object result2 = Text();
-                if (result2 is int && result is int)
+                if (result2 is double && result is double)
                 {
-                    result = Convert.ToInt32(result) > Convert.ToInt32(result2);
+                    result = Convert.ToDouble(result) > Convert.ToDouble(result2);
                     Operador = Bool_Oper.Length;
                 }
                 else
                 {
-                    Error();
+                    Error("El operador > no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
                 }
             }
             if (Operador == 3)
             {
                 Eat(TokenType.More_Equal_Than);
                 object result2 = Text();
-                if (result2 is int && result is int)
+                if (result2 is double && result is double)
                 {
-                    result = Convert.ToInt32(result) >= Convert.ToInt32(result2);
+                    result = Convert.ToDouble(result) >= Convert.ToDouble(result2);
                     Operador = Bool_Oper.Length;
                 }
                 else
                 {
-                    Error();
+                    Error("El operador >= no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
                 }
             }
             if (Operador == 4)
             {
-   //             System.Console.WriteLine("El tipo de Token es " + actual_token.Type);
+                //             System.Console.WriteLine("El tipo de Token es " + actual_token.Type);
                 Eat(TokenType.Min_Than);
-     //           System.Console.WriteLine("Llego aqui e este punto");
+                //           System.Console.WriteLine("Llego aqui e este punto");
                 object result2 = Text();
-                if (result2 is int && result is int)
+                if (result2 is double && result is double)
                 {
-                    result = Convert.ToInt32(result) < Convert.ToInt32(result2);
+                    result = Convert.ToDouble(result) < Convert.ToDouble(result2);
                     Operador = Bool_Oper.Length;
                 }
                 else
                 {
-                    Error();
+                    Error("El operador < no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
                 }
             }
             if (Operador == 5)
             {
                 Eat(TokenType.Min_Equal_Than);
                 object result2 = Text();
-                if (result2 is int && result is int)
+                if (result2 is double && result is double)
                 {
-                    result = Convert.ToInt32(result) <= Convert.ToInt32(result2);
+                    result = Convert.ToDouble(result) <= Convert.ToDouble(result2);
                     Operador = Bool_Oper.Length;
                 }
                 else
                 {
-                    Error();
+                    Error("El operador < no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
                 }
             }
 
@@ -311,12 +319,12 @@ class Parser
             if (actual_token.Type == TokenType.SUM_Operator)
             {
                 Eat(TokenType.SUM_Operator);
-                result = Convert.ToInt32(result) + Convert.ToInt32(Exp());
+                result = Convert.ToDouble(result) + Convert.ToDouble(Exp());
             }
             if (actual_token.Type == TokenType.REST_Operator)
             {
                 Eat(TokenType.REST_Operator);
-                result = Convert.ToInt32(result) - Convert.ToInt32(Exp());
+                result = Convert.ToDouble(result) - Convert.ToDouble(Exp());
             }
         }
         return result;
@@ -332,12 +340,12 @@ class Parser
             if (actual_token.Type == TokenType.MULT_Operator)
             {
                 Eat(TokenType.MULT_Operator);
-                result = Convert.ToInt32(result) * Convert.ToInt32(Pow());
+                result = Convert.ToDouble(result) * Convert.ToDouble(Pow());
             }
             if (actual_token.Type == TokenType.DIV_Operator)
             {
                 Eat(TokenType.DIV_Operator);
-                result = Convert.ToInt32(result) / Convert.ToInt32(Pow());
+                result = Convert.ToDouble(result) / Convert.ToDouble(Pow());
             }
         }
         return result;
@@ -348,7 +356,7 @@ class Parser
         while (actual_token.Type == TokenType.POW_Operator)
         {
             Eat(TokenType.POW_Operator);
-            result = Math.Pow(Convert.ToInt32(result), Convert.ToInt32(Pow()));
+            result = Math.Pow(Convert.ToDouble(result), Convert.ToDouble(Pow()));
         }
         return result;
     }
@@ -359,7 +367,7 @@ class Parser
         if (actual_token.Type == TokenType.Number)
         {
             Eat(TokenType.Number);
-            object result = Convert.ToInt32(actual_token_value);
+            object result = Convert.ToDouble(actual_token_value);
             return result;
         }
         else if (actual_token.Type == TokenType.SUM_Operator)
@@ -403,8 +411,8 @@ class Parser
             if (!(actual_token.Value.ToString() == "else")) Error();
             Eat(TokenType.Keyword);
             object result2 = Expression();
-            
-            if(decision is true) return result1;
+
+            if (decision is true) return result1;
 
             return result2;
 
@@ -417,9 +425,9 @@ class Parser
             variable_subset++;
             Eat(TokenType.In_Keyword);
             object result = Expression();
-  //          System.Console.WriteLine("No he eliminado las variables");
+            //          System.Console.WriteLine("No he eliminado las variables");
             Variables_Set.RemoveAt(variable_subset);
-      //      System.Console.WriteLine("Ya eliminé las variables");
+            //      System.Console.WriteLine("Ya eliminé las variables");
             variable_subset--;
             return result;
 
@@ -427,40 +435,32 @@ class Parser
         else if (actual_token.Type == TokenType.Identifier)
         {
             Eat(TokenType.Identifier);
-            //Comprobar si es una variable
-            int i = 0;
-            // foreach (var item in Variables_Set)
-            // {
-            //    System.Console.WriteLine(i);
-            //     foreach (var variable in item)
-            //     {
-            //        System.Console.WriteLine(variable.Key + "   " + variable.Value);
-            //     }
-            //     i++;
-            // }
+            //Comprobar si es una funcion
+            //      System.Console.WriteLine("Quejeto");
 
-      //      System.Console.WriteLine("Quejeto");
+            if (IsNext(TokenType.LEFT_PARENTHESIS))
+            {
+                //Es porque es una funcion
+                string function_name = actual_token_value.ToString();
+                bool Existence1 = Check_Function_Existence();
+                if (!Existence1) Error("Esta funcion no existe");
+
+                object result = Choosing_Function(function_name);
+
+                return result;
+            }
+            //si no es una funcion entonces es una variable
             (object, bool) Existence = Check_Var_Existence();
-            if (Existence.Item2)
-            {
-           //     System.Console.WriteLine("la variable es " + Existence.Item1);
-                return Existence.Item1;
-            }
-            else
-            {
-                //Si no es una variable es una funcion
-                //Por ahora vamos a pasar error porque no hemos implementado las funciones
-                Error();
-            }
+            if (!Existence.Item2) Error("La variable no existe en este entorno");
+            //     System.Console.WriteLine("la variable es " + Existence.Item1);
 
-
-            return Variables_Set[variable_subset][actual_token_value.ToString()];
+            return Existence.Item1;
 
         }
         else
         {
-            if(actual_token.Value.ToString()=="else") Error();
-            if(actual_token.Value.ToString()=="in") Error();
+            if (actual_token.Value.ToString() == "else") Error("Antes de un else siempre debe existir un if");
+            if (actual_token.Value.ToString() == "in") Error("Antes de un in siempre debe existir un let");
             Eat(TokenType.LEFT_PARENTHESIS);
             object result = Expression();
             Eat(TokenType.RIGHT_PARENTHESIS);
@@ -472,6 +472,16 @@ class Parser
     private bool IsTrue(object choise)
     {
         if (choise is true) return true;
+
+        return false;
+    }
+
+    private bool IsNext(TokenType Expected_Type)
+    {
+        if (position + 1 < Token_Set.Count && Token_Set[position + 1].Type == Expected_Type)
+        {
+            return true;
+        }
 
         return false;
     }
@@ -500,8 +510,7 @@ class Parser
         Eat(TokenType.Asignation_Operator);
         object value = null;
 
-        if (actual_token.Value == "let") Error();
-        //revisar esta linea
+        if (actual_token.Value.ToString() == "let") Error("Si va a declarar una expresión let dentro de una variable debe hacerla entre parentesis");
 
         value = Expression();
         return (variable_name, value);
@@ -516,7 +525,7 @@ class Parser
 
             if (Variables_Set[i].ContainsKey(actual_token_value.ToString()))
             {
-          //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
+                //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
                 return (Variables_Set[i][actual_token_value.ToString()], true);
             }
 
@@ -524,7 +533,22 @@ class Parser
         return ("", false);
     }
 
-    void Choosing_Function(string function_name)
+    bool Check_Function_Existence()
+    {
+        for (int i = Function_State.Count; i >= 0; i--)
+        {
+
+            if (Function_State[i] == actual_token_value.ToString())
+            {
+                //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    object Choosing_Function(string function_name)
     {
         //Metodo para procesar funciones, primero descarta que sea una de las globales y 
         //después va para las funciones temporales
@@ -535,41 +559,44 @@ class Parser
 
                 Eat(TokenType.LEFT_PARENTHESIS);
                 string numero1 = Numb().ToString();
+                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                float conversion1;
-                if (!float.TryParse(numero1, out conversion1)) Error();
-                Math.Sin(conversion1);
-                break;
+                double conversion1;
+                if (!double.TryParse(numero1, out conversion1)) Error("La expresion debe ser de tipo numerica");
+                return Math.Sin(conversion1);
             case "cos":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
                 Eat(TokenType.LEFT_PARENTHESIS);
                 string numero2 = Numb().ToString();
+
+                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                float conversion2;
-                if (!float.TryParse(numero2, out conversion2)) Error();
-                Math.Cos(conversion2);
-                break;
+                double conversion2;
+                if (!double.TryParse(numero2, out conversion2)) Error("La expresion debe ser de tipo numerica");
+                return Math.Cos(conversion2);
             case "sqrt":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
                 Eat(TokenType.LEFT_PARENTHESIS);
                 string numero3 = Numb().ToString();
+
+                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                float conversion3;
-                if (!float.TryParse(numero3, out conversion3)) Error();
-                Math.Sqrt(conversion3);
-                break;
+                double conversion3;
+                if (!double.TryParse(numero3, out conversion3)) Error("La expresion debe ser de tipo numerica");
+                return Math.Sqrt(conversion3);
             case "exp":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
                 Eat(TokenType.LEFT_PARENTHESIS);
                 string numero4 = Numb().ToString();
+
+                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                float conversion4;
-                if (!float.TryParse(numero4, out conversion4)) Error();
-                Math.Pow(Math.E, conversion4);
-                break;
+                double conversion4;
+                if (!double.TryParse(numero4, out conversion4)) Error("La expresion debe ser de tipo numerica");
+                return Math.Pow(Math.E, conversion4);
 
             case "log":
                 //Parsea la expresion coge el valor y pasaselo al metodo
@@ -577,27 +604,41 @@ class Parser
                 Eat(TokenType.LEFT_PARENTHESIS);
 
                 string numero5 = Numb().ToString();
-                float basis;
-                if (!float.TryParse(numero5, out basis)) Error();
+                double basis;
+                if (!double.TryParse(numero5, out basis)) Error("La expresion debe ser de tipo numerica");
                 Eat(TokenType.Comma);
                 string numero6 = Numb().ToString();
-                float argumento;
-                if (!float.TryParse(numero5, out argumento)) Error();
-                Eat(TokenType.RIGHT_PARENTHESIS);
-                Math.Log(basis, argumento);
+                double argumento;
+                if (!double.TryParse(numero5, out argumento)) Error("La expresion debe ser de tipo numerica");
 
-                break;
+                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo dos expresiones");
+                Eat(TokenType.RIGHT_PARENTHESIS);
+                return Math.Log(basis, argumento);
+
             case "print":
+
                 //Parsea la expresion coge el valor y pasaselo al metodo
-                //Console.WriteLine(Parse.Expresion) y devuelve ese valor
-                break;
+                Eat(TokenType.LEFT_PARENTHESIS);
+                object ToPrint = Expression();
+                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
+                System.Console.WriteLine(Expression);
+                Eat(TokenType.RIGHT_PARENTHESIS);
+                return ToPrint;
 
             case "rand":
-                break;
+
+                Eat(TokenType.LEFT_PARENTHESIS);
+                Eat(TokenType.RIGHT_PARENTHESIS);
+
+                return 0;
 
             default:
-                //Parse_Corpus_Function()
-                break;
+                // Eat(TokenType.LEFT_PARENTHESIS);
+                //Que me parsee las variables y por cada una que parsee guarde la cantidad, si son diferentes
+                //del lenght de la lista de variables que lance un error porque solo pueden haber n variables
+                // Eat(TokenType.RIGHT_PARENTHESIS);
+                //Ahora con las variables procesa el cuerpo de la funcion                
+                return "nameof";
 
         }
     }
@@ -607,7 +648,7 @@ class Parser
 
     private void Eat(TokenType Type)
     {
-    //    System.Console.WriteLine(actual_token.Type + "  " + actual_token.Value + " type debe ser " + Type);
+        //    System.Console.WriteLine(actual_token.Type + "  " + actual_token.Value + " type debe ser " + Type);
         if (Type == actual_token.Type)
         {
             actual_token_value = actual_token.Value;

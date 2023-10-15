@@ -20,8 +20,9 @@
             Prueba.Show_TokenSet();
             Parser Syntax = new Parser(Prueba.TokenSet);
             Syntax.Start();
-            }catch
+            }catch(Exception text)
             {
+                System.Console.WriteLine(text);
                 continue;
             }
 
