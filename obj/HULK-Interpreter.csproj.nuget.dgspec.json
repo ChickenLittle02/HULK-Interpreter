@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\RUBEN\\SCHOOL\\Compilador\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj": {}
+    "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\HULK-Interpreter.csproj": {}
   },
   "projects": {
-    "C:\\RUBEN\\SCHOOL\\Compilador\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj": {
+    "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\HULK-Interpreter.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\RUBEN\\SCHOOL\\Compilador\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj",
+        "projectUniqueName": "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\HULK-Interpreter.csproj",
         "projectName": "HULK-Interpreter",
-        "projectPath": "C:\\RUBEN\\SCHOOL\\Compilador\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj",
+        "projectPath": "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\HULK-Interpreter.csproj",
         "packagesPath": "C:\\Users\\ruben\\.nuget\\packages\\",
-        "outputPath": "C:\\RUBEN\\SCHOOL\\Compilador\\HULK\\HULK-Interpreter\\obj\\",
+        "outputPath": "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ruben\\AppData\\Roaming\\NuGet\\NuGet.Config"

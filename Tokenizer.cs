@@ -16,7 +16,8 @@ public enum TokenType
     More_Equal_Than, //>=
     Min_Than,// <
     And_Operator,// &
-    Or_Operator,// ||
+    Or_Operator,// |
+    Not_Operator,// /!
     Min_Equal_Than,// <=
     Arrow, //=>
     Identifier, // todos los nombres
@@ -24,17 +25,21 @@ public enum TokenType
     Function_Keyword, //function
     Let_Keyword,//let
     In_Keyword,//in
-    Bool_True,
-    Bool_False,
+    Boolean,// true, false
     Comma, //,
     Semicolon, //;
     Quotes_Text, // "mm"
     Blank_Space,// " "
     EOT, //End of Tokens
+    nul,
 }
+
+
 
 public class Token
 {
+    public int inicio_else { get; private set;}
+    public int final_else {get;private set;}
     public TokenType Type { get; set; }
     public object Value { get; set; }
 
@@ -42,11 +47,18 @@ public class Token
     {
         Type = type;
         Value = value;
+        inicio_else = 0;
+        final_else = 0;
     }
     public void Show()
     {
         System.Console.WriteLine("(" + Type + "," + Value + ")");
     }
+public void Set_Inicio_FInal(int inicio, int final)
+{
+    inicio_else = inicio;
+    final_else = final;
+}
 }
 
 
@@ -92,13 +104,18 @@ public class Tokenizer
     public void Start()
     {
         while (position < text_size)
-        {
+        {//Va por cada posicion del texto y dando una clasificacion a cada token
             Add_Simple_Token();
         }
+        
+        //El End of TOken se pone solamente si position se paso del text size
+        Add_To_TokenSet(TokenType.EOT,"EOT");
     }
 
     public void Add_Simple_Token()
     {
+        //Este va comprobando si es uno de los token que solo estan compuestos por un char,
+        //Y si no es ninguno de ellos, entonces comprueba que sea uno de los tokens que tienen mas de un caracter
 
         switch (actual_char)
         {
@@ -176,6 +193,17 @@ public class Tokenizer
                 Add_To_TokenSet(TokenType.CONCAT_OPERATOR, actual_char);
                 GetNextChar();
 
+                break;
+            case '|':
+
+                // System.Console.WriteLine("Entro a que es el operador de concatenar texto");
+                Add_To_TokenSet(TokenType.Or_Operator, actual_char);
+                GetNextChar();
+                break;
+            case '&':
+                // System.Console.WriteLine("Entro a que es el operador de concatenar texto");
+                Add_To_TokenSet(TokenType.And_Operator, actual_char);
+                GetNextChar();
                 break;
             default:
                 Add_Compose_Token();
@@ -277,18 +305,17 @@ public class Tokenizer
                 else if (actual_TokenValue == "function")
                 {
                     Add_To_TokenSet(TokenType.Function_Keyword, actual_TokenValue);
-                    Add_Function();
                 }
 
                 else Add_To_TokenSet(TokenType.Keyword, actual_TokenValue);
 
             }
             else if (comprobando && Convert.ToString(actual_TokenValue) == "true")
-                Add_To_TokenSet(TokenType.Bool_True, actual_TokenValue);
+                Add_To_TokenSet(TokenType.Boolean, actual_TokenValue);
 
 
             else if (comprobando && Convert.ToString(actual_TokenValue) == "false")
-                Add_To_TokenSet(TokenType.Bool_False, actual_TokenValue);
+                Add_To_TokenSet(TokenType.Boolean, actual_TokenValue);
 
             else
                 Add_To_TokenSet(TokenType.Identifier, actual_TokenValue);
@@ -332,7 +359,10 @@ public class Tokenizer
                 GetNextChar();
 
             }
-            else Error(actual_char+" No es un token valido");
+            else 
+                actual_TokenValue = "!";
+                Add_To_TokenSet(TokenType.Not_Operator, actual_TokenValue);
+                GetNextChar();Error(actual_char+" No es un token valido");
         }
         else if (actual_char == '>')
         {
@@ -373,10 +403,6 @@ public class Tokenizer
             
     }
 
-    public void Add_Function()
-    {
-
-    }
     public bool IsThat(char possible)
     {
         if (position + 1 != text_size && possible == Text[position + 1])

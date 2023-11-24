@@ -1,8 +1,9 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Xml.XPath;
 
 class Function
-{
+{//COmo en el analizador sintactico se comprueban que los tipos estan correctos, entonces en el parser solo se ejecuta el codigo
     public List<string> Variables { get; set; }
     public List<Token> Tokens_Body { get; set; }
     public Function(List<string> variables, List<Token> tokens_body)
@@ -11,8 +12,9 @@ class Function
         Tokens_Body = tokens_body;
     }
 
-    public void Show_Variables(){
-        
+    public void Show_Variables()
+    {
+
         System.Console.WriteLine("Variables");
         System.Console.WriteLine(" ");
         foreach (var item in this.Variables)
@@ -21,9 +23,10 @@ class Function
         }
     }
 
-    public void Show_Body(){
+    public void Show_Body()
+    {
         System.Console.WriteLine("Body");
-        System.Console.WriteLine(" "+this.Tokens_Body.Count);
+        System.Console.WriteLine(" " + this.Tokens_Body.Count);
         foreach (var item in this.Tokens_Body)
         {
             item.Show();
@@ -38,17 +41,18 @@ class Parser
     private int position { get; set; }
     int size { get; set; }
     List<Dictionary<string, object>> Variables_Set { get; set; }
-    Dictionary<string, Function> New_Functions { get; set;}
+    Dictionary<string, Function> New_Functions { get; set; }
     //Aqui se encuentran todas las funciones agregadas
-    
-    public Dictionary<string, Function> Get_New_Functions(){
+
+    public Dictionary<string, Function> Get_New_Functions()
+    {
         Dictionary<string, Function> Copy = New_Functions;
         return New_Functions;
     }
-    
+
     List<string> Function_State = new List<string>
     {"sqrt","cos","sin","exp","log","rand"};
-    //FUnction_State me dice el estado de la funcion, si es 0 es xq es del sistema y si es 1 es porque la agregué
+    //FUnction_State me dice quienes son las funciones que tengo
 
 
     int variable_subset { get; set; }
@@ -60,7 +64,7 @@ class Parser
     {
         throw new Exception(message);
     }
-    public Parser(List<Token> token_Set, Dictionary<string,object> Var_Subset,Dictionary<string, Function> new_functions)
+    public Parser(List<Token> token_Set, Dictionary<string, object> Var_Subset, Dictionary<string, Function> new_functions)
     {
         Token_Set = token_Set;
         position = 0;
@@ -83,8 +87,11 @@ class Parser
             actual_token = null;
         }
     }
-    private void Renovando_Funciones(){
-        if(New_Functions.Count!=0){
+    private void Renovando_Funciones()
+    {
+
+        if (New_Functions.Count != 0)
+        {
             foreach (var item in New_Functions)
             {
                 Function_State.Add(item.Key);
@@ -92,7 +99,7 @@ class Parser
         }
     }
 
-        public Parser(List<Token> token_Set, Dictionary<string, Function> new_functions)
+    public Parser(List<Token> token_Set, Dictionary<string, Function> new_functions)
     {
         Token_Set = token_Set;
         position = 0;
@@ -115,12 +122,13 @@ class Parser
     public object Start()
     {
         object result;
-        if(actual_token.Type!= TokenType.Function_Keyword) result = Expression();
-        else{
+        if (actual_token.Type != TokenType.Function_Keyword) result = Expression();
+        else
+        {
             Add_Function();
             foreach (var item in New_Functions)
             {
-              System.Console.WriteLine("La funcion es "+item.Key);
+                System.Console.WriteLine("La funcion es " + item.Key);
                 item.Value.Show_Variables();
                 item.Value.Show_Body();
             }
@@ -128,44 +136,50 @@ class Parser
         }
 
         return result;
-        }
+    }
 
     private void Add_Function()
-    {//las estricturas de las funciones son
+    {//las estructuras de las funciones son
      //function nombre_funcion(variables) => cuerpo_funcion;
         Eat(TokenType.Function_Keyword);
         Eat(TokenType.Identifier);
         string name = actual_token_value.ToString();
         bool Ya_Agregada = New_Functions.ContainsKey(name);
 
-        if(Function_State.Contains(name)&&(!Ya_Agregada)) Error("Ya existe una función del sistema con ese nombre");
-
-        if(Ya_Agregada){
-            System.Console.WriteLine("Ya existe una función con este mismo nombre, desea sobreescribirla");
-            System.Console.WriteLine("Toque Enter para confrimar, o N si no desea sobreescribirla");
-            string decision = Console.ReadLine();
-            
-            if(decision=="") Error("No fue agregada su funcion");
-           // else Elimina el elemento del diccionario 
-        }
+        if (Function_State.Contains(name) && (!Ya_Agregada)) Error("Ya existe una función del sistema con ese nombre");
         //Si esta condicion se cumple es porque es una funcion del sistema
-        
+
+        if (Ya_Agregada)
+        {
+            System.Console.WriteLine("Ya existe una función con este mismo nombre, desea sobreescribirla");
+            System.Console.WriteLine("Toque Enter para sobreescribirla, o cualquier letra si no desea sobreescribirla");
+            string decision = Console.ReadLine();
+
+            if (decision == "") Error("No fue agregada su funcion");
+            // else Elimina el elemento del diccionario 
+        }
+
         Eat(TokenType.LEFT_PARENTHESIS);
         List<string> Var = Function_Variables();
         Eat(TokenType.RIGHT_PARENTHESIS);
         Eat(TokenType.Arrow);
         List<Token> body = Make_Body();
         Function New = new Function(Var, body);
-        New_Functions.Add(name,New);
+        New_Functions.Add(name, New);
         Function_State.Add(name);
-        System.Console.WriteLine("Function_State.Count"+Function_State.Count);
-        foreach (var item in Function_State){
+        System.Console.WriteLine("Function_State.Count" + Function_State.Count);
+        foreach (var item in Function_State)
+        {
             System.Console.WriteLine(item);
         }
 
     }
     private List<string> Function_Variables()
-    {
+    {   //Va agregando las variables de la funcion
+        //Recordar que las variables en una funcion estan en la forma (a,b,c)
+        //Por tanto cuando se agregue una variable mientras exista una coma, entonces se agregan variables
+        //devuelve una lista con los nombres de las variables de la funcion
+
         List<string> Variable_ALL = new List<string>();
         Eat(TokenType.Identifier);
         string variable = actual_token_value.ToString();
@@ -195,8 +209,8 @@ class Parser
         if (actual_token.Type == TokenType.EOT) Error("EL útlimo token debe ser un punto y coma");
 
         Token_Body.Add(actual_token);
-        
-        System.Console.WriteLine("TOken_Body tiene "+Token_Body.Count+"elementos");
+
+        System.Console.WriteLine("TOken_Body tiene " + Token_Body.Count + "elementos");
         GetNextToken();
 
         return Token_Body;
@@ -204,32 +218,20 @@ class Parser
     private object Expression()
     {
         object result = Bool_Op();
-        bool Es_Bool = false;
-        if (result is bool)
-        {
-            Es_Bool = true;
-        }
+
         while (actual_token.Type == TokenType.And_Operator || actual_token.Type == TokenType.Or_Operator)
         {
             if (actual_token.Type == TokenType.And_Operator)
             {
-                if (Es_Bool)
-                {
-                    Eat(TokenType.And_Operator);
-                    object result1 = Bool_Op();
-                    if (result1 is bool)
-                    {
-                        result = Convert.ToBoolean(result) && Convert.ToBoolean(result1);
-                    }
-                    else
-                    {
-                        Error("Seguido de un operador de && o || debe existir una expresion que devuelva true o false");
-                    }
-                }
-                else
-                {
-                    Error("Antes de un operador de && o || debe existir una expresion que devuelva true o false");
-                }
+                Eat(TokenType.And_Operator);
+                object result1 = Bool_Op();
+                result = Convert.ToBoolean(result) && Convert.ToBoolean(result1);
+            }
+            else if (actual_token.Type == TokenType.Or_Operator)
+            {
+                Eat(TokenType.Or_Operator);
+                object result1 = Bool_Op();
+                result = Convert.ToBoolean(result) || Convert.ToBoolean(result1);
             }
         }
         return result;
@@ -249,38 +251,19 @@ class Parser
     {
         object result = Text();
         int Operador = ItsBoolOp(actual_token.Type);
-        if (Operador < Bool_Oper.Length)
-        {
 
-            //System.Console.WriteLine("Dice que es el operador " + Bool_Oper[Operador]);
-        }
-        //        else { System.Console.WriteLine("No es ninguno de los operadores booleanos"); }
         while (Operador < Bool_Oper.Length)
         {
             if (Operador == 0)
             {
                 Eat(TokenType.Equal_Operator);
                 object result2 = Text();
-                if (result2.GetType() == result.GetType())
-                {
-                    if (result is string)
-                    {
-                        result = Convert.ToString(result) == Convert.ToString(result2);
-                    }
-                    else if (result is double)
-                    {
-                        result = Convert.ToDouble(result) == Convert.ToDouble(result2);
-                    }
-                    else
-                    {
-                        result = Convert.ToBoolean(result) == Convert.ToBoolean(result2);
-                    }
-                    Operador = Bool_Oper.Length;
-                }
-                else
-                {
-                    Error("No se pueden comparar expresiones de tipos diferentes");
-                }
+
+                if (result is string) result = Convert.ToString(result) == Convert.ToString(result2);
+                else if (result is double) result = Convert.ToDouble(result) == Convert.ToDouble(result2);
+                else result = Convert.ToBoolean(result) == Convert.ToBoolean(result2);
+
+                Operador = ItsBoolOp(actual_token.Type);
             }
 
             if (Operador == 1)
@@ -288,88 +271,39 @@ class Parser
                 Eat(TokenType.Distinct);
                 object result2 = Text();
 
-                if (result2.GetType() == result.GetType())
-                {
+                if (result is string) result = Convert.ToString(result) != Convert.ToString(result2);
+                else if (result is double) result = Convert.ToDouble(result) != Convert.ToDouble(result2);
+                else result = Convert.ToBoolean(result) != Convert.ToBoolean(result2);
 
-                    if (result is string)
-                    {
-                        result = Convert.ToString(result) != Convert.ToString(result2);
-                    }
-                    else if (result is double)
-                    {
-                        result = Convert.ToDouble(result) != Convert.ToDouble(result2);
-
-                    }
-                    else
-                    {
-
-                        result = Convert.ToBoolean(result) != Convert.ToBoolean(result2);
-
-                    }
-                    Operador = Bool_Oper.Length;
-                }
-                else
-                {
-                    Error("No se pueden comparar expresiones de tipos diferentes");
-                }
+                Operador = ItsBoolOp(actual_token.Type);
             }
             if (Operador == 2)
             {
                 Eat(TokenType.More_Than);
                 object result2 = Text();
-                if (result2 is double && result is double)
-                {
-                    result = Convert.ToDouble(result) > Convert.ToDouble(result2);
-                    Operador = Bool_Oper.Length;
-                }
-                else
-                {
-                    Error("El operador > no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
-                }
+                result = Convert.ToDouble(result) > Convert.ToDouble(result2);
+                Operador = ItsBoolOp(actual_token.Type);
             }
             if (Operador == 3)
             {
                 Eat(TokenType.More_Equal_Than);
                 object result2 = Text();
-                if (result2 is double && result is double)
-                {
-                    result = Convert.ToDouble(result) >= Convert.ToDouble(result2);
-                    Operador = Bool_Oper.Length;
-                }
-                else
-                {
-                    Error("El operador >= no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
-                }
+                result = Convert.ToDouble(result) >= Convert.ToDouble(result2);
+                Operador = ItsBoolOp(actual_token.Type);
             }
             if (Operador == 4)
             {
-                //             System.Console.WriteLine("El tipo de Token es " + actual_token.Type);
                 Eat(TokenType.Min_Than);
-                //           System.Console.WriteLine("Llego aqui e este punto");
                 object result2 = Text();
-                if (result2 is double && result is double)
-                {
-                    result = Convert.ToDouble(result) < Convert.ToDouble(result2);
-                    Operador = Bool_Oper.Length;
-                }
-                else
-                {
-                    Error("El operador < no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
-                }
+                result = Convert.ToDouble(result) < Convert.ToDouble(result2);
+                Operador = ItsBoolOp(actual_token.Type);
             }
             if (Operador == 5)
             {
                 Eat(TokenType.Min_Equal_Than);
                 object result2 = Text();
-                if (result2 is double && result is double)
-                {
-                    result = Convert.ToDouble(result) <= Convert.ToDouble(result2);
-                    Operador = Bool_Oper.Length;
-                }
-                else
-                {
-                    Error("El operador < no se puede usar si ambos tokens a sus lados no son expresiones que devuelven numeros");
-                }
+                result = Convert.ToDouble(result) <= Convert.ToDouble(result2);
+                Operador = ItsBoolOp(actual_token.Type);
             }
 
         }
@@ -400,7 +334,7 @@ class Parser
     }
 
     private object Form()
-    {
+    {//Aqui se compreueba el caso en que sea una expresion de suma o resta
         object result = Exp();
         while (actual_token.Type == TokenType.SUM_Operator || actual_token.Type == TokenType.REST_Operator)
         {
@@ -410,8 +344,9 @@ class Parser
                 Eat(TokenType.SUM_Operator);
                 result = Convert.ToDouble(result) + Convert.ToDouble(Exp());
             }
-            if (actual_token.Type == TokenType.REST_Operator)
-            {
+            else
+            {//La opcion que queda es que sea REST_Operator
+
                 Eat(TokenType.REST_Operator);
                 result = Convert.ToDouble(result) - Convert.ToDouble(Exp());
             }
@@ -420,7 +355,7 @@ class Parser
     }
 
     private object Exp()
-    {
+    {//Aqui se comprueba una posible multiplicacion o division
         object result = Pow();
 
         while (actual_token.Type == TokenType.MULT_Operator || actual_token.Type == TokenType.DIV_Operator)
@@ -431,16 +366,18 @@ class Parser
                 Eat(TokenType.MULT_Operator);
                 result = Convert.ToDouble(result) * Convert.ToDouble(Pow());
             }
-            if (actual_token.Type == TokenType.DIV_Operator)
-            {
+            else
+            {//La opcion que quueda es qye sea DIV_Operator
                 Eat(TokenType.DIV_Operator);
-                result = Convert.ToDouble(result) / Convert.ToDouble(Pow());
+                double denominador = Convert.ToDouble(Pow());
+                if (denominador == 0) Error("No es posible realizar una division por 0");
+                result = Convert.ToDouble(result) / denominador;
             }
         }
         return result;
     }
     private object Pow()
-    {
+    {//Aqui se comprueba una posible potencia
         object result = Numb();
         while (actual_token.Type == TokenType.POW_Operator)
         {
@@ -462,25 +399,18 @@ class Parser
         else if (actual_token.Type == TokenType.SUM_Operator)
         {
             Eat(TokenType.SUM_Operator);
-            Eat(TokenType.Number);
-            return actual_token_value;
+            object result = Expression();
+            return result;
         }
         else if (actual_token.Type == TokenType.REST_Operator)
         {
             Eat(TokenType.REST_Operator);
-            Eat(TokenType.Number);
-            double result = 0 - Convert.ToDouble(actual_token_value);
+            double result = 0 - Convert.ToDouble(Expression());
             return result;
         }
-        else if (actual_token.Type == TokenType.Bool_True)
-        {
-            Eat(TokenType.Bool_True);
-            object result = Convert.ToBoolean(actual_token_value);
-            return result;
-        }
-        else if (actual_token.Type == TokenType.Bool_False)
-        {
-            Eat(TokenType.Bool_False);
+        else if (actual_token.Type == TokenType.Boolean)
+        {//Puede ser true o false
+            Eat(TokenType.Boolean);
             object result = Convert.ToBoolean(actual_token_value);
             return result;
         }
@@ -492,18 +422,28 @@ class Parser
         }
         else if (actual_token.Value.ToString() == "if")
         { //System.Console.WriteLine("Entro a que es un if");
-
+            Token if_token = actual_token;
             Eat(TokenType.Keyword);
             object decision = Expression();
-            if (!(decision is bool)) Error();
-            object result1 = Expression();
-            if (!(actual_token.Value.ToString() == "else")) Error();
-            Eat(TokenType.Keyword);
-            object result2 = Expression();
+            if (decision is true)
+            {
+                object result = Expression();
+                position = if_token.final_else - 1;
+                GetNextToken();
+                return result;
 
-            if (decision is true) return result1;
+            }
+            else
+            {
+                position = if_token.inicio_else-1;
+                //Esta es la posicion del else correspondiente a este if
+                GetNextToken();
+                System.Console.WriteLine("Este token es " + actual_token.Value);
+                object result2 = Expression();
+                return result2;
+            }
 
-            return result2;
+
 
         }
         else if (actual_token.Type == TokenType.Let_Keyword)
@@ -547,6 +487,13 @@ class Parser
             return Existence.Item1;
 
         }
+        else if (actual_token.Type == TokenType.Not_Operator)
+        {
+            Eat(TokenType.Not_Operator);
+            object result = Expression();
+            //            if(!(result is bool)) Error("Despues del operador ! se espera un tipo bool");
+            return !Convert.ToBoolean(result);
+        }
         else
         {
             if (actual_token.Value.ToString() == "else") Error("Antes de un else siempre debe existir un if");
@@ -559,6 +506,27 @@ class Parser
 
     }
 
+    int SearchElse()
+    {
+        Stack<string> If_Stack = new Stack<string>();
+
+        int if_position = 0;
+
+        for (int i = position; i < Token_Set.Count; i++)
+        {
+            if (Token_Set[i].Value.ToString() == "if")
+            {
+                If_Stack.Push("if");
+            }
+            else if (Token_Set[i].Value.ToString() == "else")
+            {
+                if (If_Stack.Count == 0) return i;
+                else If_Stack.Pop();
+            }
+        }
+        return if_position;
+    }
+
     private bool IsTrue(object choise)
     {
         if (choise is true) return true;
@@ -569,7 +537,7 @@ class Parser
     private bool IsNext(TokenType Expected_Type)
     {
         System.Console.WriteLine(Expected_Type);
-        return actual_token.Type==Expected_Type;
+        return actual_token.Type == Expected_Type;
     }
 
     private Dictionary<string, object> Variables_Subset()
@@ -608,23 +576,18 @@ class Parser
 
         for (int i = variable_subset; i >= 0; i--)
         {
-
             if (Variables_Set[i].ContainsKey(actual_token_value.ToString()))
-            {
-                //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
-                return (Variables_Set[i][actual_token_value.ToString()], true);
-            }
-
+            return (Variables_Set[i][actual_token_value.ToString()], true);   
         }
         return ("", false);
     }
 
     bool Check_Function_Existence()
-    {
-        System.Console.WriteLine("Function_State "+Function_State.Count);
-        for (int i = Function_State.Count-1; i >= 0; i--)
+    {//Va iterando por el diccionario de funciones buscando si el nombre de la funcion existe
+        // System.Console.WriteLine("Function_State " + Function_State.Count);
+        for (int i = Function_State.Count - 1; i >= 0; i--)
         {
-            System.Console.WriteLine(Function_State[i]);
+            //System.Console.WriteLine(Function_State[i]);
             if (Function_State[i] == actual_token_value.ToString())
             {
                 //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
@@ -639,76 +602,58 @@ class Parser
     {
         //Metodo para procesar funciones, primero descarta que sea una de las globales y 
         //después va para las funciones temporales
+
         switch (function_name)
         {
             case "sin":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
                 Eat(TokenType.LEFT_PARENTHESIS);
-                string numero1 = Numb().ToString();
-                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
+                object numero1 = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                double conversion1;
-                if (!double.TryParse(numero1, out conversion1)) Error("La expresion debe ser de tipo numerica");
-                return Math.Sin(conversion1);
+                return Math.Sin((double)numero1);
             case "cos":
                 //Parsea la expresion coge el valor y pasaselo al metodo
-
                 Eat(TokenType.LEFT_PARENTHESIS);
-                string numero2 = Numb().ToString();
-
-                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
+                object numero2 = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                double conversion2;
-                if (!double.TryParse(numero2, out conversion2)) Error("La expresion debe ser de tipo numerica");
-                return Math.Cos(conversion2);
+                return Math.Cos((double)numero2);
+
+
             case "sqrt":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
                 Eat(TokenType.LEFT_PARENTHESIS);
-                string numero3 = Numb().ToString();
-
-                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
+                object numero3 = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                double conversion3;
-                if (!double.TryParse(numero3, out conversion3)) Error("La expresion debe ser de tipo numerica");
-                return Math.Sqrt(conversion3);
+                return Math.Sqrt((double)numero3);
+
             case "exp":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
+                
                 Eat(TokenType.LEFT_PARENTHESIS);
-                string numero4 = Numb().ToString();
-
-                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
+                object numero4 = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                double conversion4;
-                if (!double.TryParse(numero4, out conversion4)) Error("La expresion debe ser de tipo numerica");
-                return Math.Pow(Math.E, conversion4);
+                return Math.Pow(Math.E, (double)numero4);
 
             case "log":
                 //Parsea la expresion coge el valor y pasaselo al metodo
 
+                
                 Eat(TokenType.LEFT_PARENTHESIS);
-
-                string numero5 = Numb().ToString();
-                double basis;
-                if (!double.TryParse(numero5, out basis)) Error("La expresion debe ser de tipo numerica");
+                object basis = Expression();
                 Eat(TokenType.Comma);
-                string numero6 = Numb().ToString();
-                double argumento;
-                if (!double.TryParse(numero5, out argumento)) Error("La expresion debe ser de tipo numerica");
-
-                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo dos expresiones");
+                object argumento = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                return Math.Log(basis, argumento);
+
+                return Math.Log((double)basis, (double)argumento);
 
             case "print":
+                //Se toma como la funcion identidad
 
-                //Parsea la expresion coge el valor y pasaselo al metodo
                 Eat(TokenType.LEFT_PARENTHESIS);
                 object ToPrint = Expression();
-                if (IsNext(TokenType.Identifier)) Error("La funcion debe recibir solo una expresion");
-                System.Console.WriteLine(Expression);
                 Eat(TokenType.RIGHT_PARENTHESIS);
                 return ToPrint;
 
@@ -721,45 +666,48 @@ class Parser
 
             default:
                 Eat(TokenType.LEFT_PARENTHESIS);
-                
+
                 //Que me parsee las variables y por cada una que parsee guarde la cantidad, si son diferentes
                 //del lenght de la lista de variables que lance un error porque solo pueden haber n variables
-                
+
                 Dictionary<string, object> Function_Variables = Make_Function_Variables(function_name);
                 Eat(TokenType.RIGHT_PARENTHESIS);
 
                 System.Console.WriteLine("Llego a aaqui ");
                 System.Console.WriteLine("Variables de la funcion");
-                foreach(var item in Function_Variables){
-                    System.Console.WriteLine(item.Key+"  "+item.Value);
-                }               
+                foreach (var item in Function_Variables)
+                {
+                    System.Console.WriteLine(item.Key + "  " + item.Value);
+                }
                 //Ahora con las variables procesa el cuerpo de la funcion
-                Parser Parse_Function = new Parser(New_Functions[function_name].Tokens_Body,Function_Variables, New_Functions);
+                Parser Parse_Function = new Parser(New_Functions[function_name].Tokens_Body, Function_Variables, New_Functions);
                 object result = Parse_Function.Start();
                 return result;
-                
+
 
         }
     }
 
 
-    private Dictionary<string, object> Make_Function_Variables(string name){
-        Dictionary<string,object> Function_Variables = new Dictionary<string, object>();
+    private Dictionary<string, object> Make_Function_Variables(string name)
+    {//Va construyendo los valores de la variable
+        Dictionary<string, object> Function_Variables = new Dictionary<string, object>();
         List<object> Values = new List<object>();
         object var_value = Expression();
         Values.Add(var_value);
-        while(actual_token.Type==TokenType.Comma)
+        while (actual_token.Type == TokenType.Comma)
         {
             Eat(TokenType.Comma);
             var_value = Expression();
             Values.Add(var_value);
         }
         int total_var = New_Functions[name].Variables.Count;
-        
-        if(total_var!=Values.Count) Error("La funcion "+name+" tiene que tener "+total_var+" variables en su declaracion");
-        
-        for(int i = 0; i<total_var; i++){
-            Function_Variables.Add(New_Functions[name].Variables[i],Values[i]);
+
+        if (total_var != Values.Count) Error("La funcion " + name + " tiene que tener " + total_var + " variables en su declaracion");
+
+        for (int i = 0; i < total_var; i++)
+        {
+            Function_Variables.Add(New_Functions[name].Variables[i], Values[i]);
         }
 
         return Function_Variables;

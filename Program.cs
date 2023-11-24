@@ -1,4 +1,6 @@
-﻿namespace Run
+﻿using Syntax_Analizer;
+
+namespace Run
 {
     class Program
     {
@@ -18,6 +20,9 @@
             }
             try{
             Tokenizer Prueba = new Tokenizer(texto);
+            Syntax CheckSyntax = new Syntax(Prueba.TokenSet);
+            CheckSyntax.Start();
+            //Crear un constructor que reciba dos argumentos para pasarle las funciones creadas
             //Prueba.Show_TokenSet();
             Parser Syntax = new Parser(Prueba.TokenSet, Saving_Functions);
             object result = Syntax.Start();
