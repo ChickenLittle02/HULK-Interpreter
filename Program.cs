@@ -1,4 +1,6 @@
-﻿using Syntax_Analizer;
+﻿using Parser;
+using Syntax_Analizer;
+using Lexer_Analizer;
 
 namespace Run
 {
@@ -6,7 +8,7 @@ namespace Run
     {
         public static void Main(string[] args)
         {
-            Dictionary<string, Function> Saving_Functions = new Dictionary<string, Function>();
+            Dictionary<string, Parser.Function> Saving_Functions = new Dictionary<string, Parser.Function>();
             while(true){
                 
             System.Console.Write("> ");
@@ -24,7 +26,7 @@ namespace Run
             CheckSyntax.Start();
             //Crear un constructor que reciba dos argumentos para pasarle las funciones creadas
             //Prueba.Show_TokenSet();
-            Parser Syntax = new Parser(Prueba.TokenSet, Saving_Functions);
+            Parser.Parser Syntax = new Parser.Parser(Prueba.TokenSet, Saving_Functions);
             object result = Syntax.Start();
             Saving_Functions = Syntax.Get_New_Functions();
             System.Console.WriteLine(result);
