@@ -4,15 +4,11 @@ namespace Parser
     {
         bool Check_Function_Existence()
         {//Va iterando por el diccionario de funciones buscando si el nombre de la funcion existe
-         // System.Console.WriteLine("Function_State " + Function_State.Count);
+
             for (int i = Function_State.Count - 1; i >= 0; i--)
             {
-                //System.Console.WriteLine(Function_State[i]);
-                if (Function_State[i] == actual_token_value.ToString())
-                {
-                    //      System.Console.WriteLine(actual_token_value + "  existe en " + i);
-                    return true;
-                }
+                if (Function_State[i] == actual_token_value.ToString()) return true;
+                
 
             }
             return false;
@@ -93,12 +89,6 @@ namespace Parser
                     Dictionary<string, object> Function_Variables = Make_Function_Variables(function_name);
                     Eat(TokenType.RIGHT_PARENTHESIS);
 
-                    System.Console.WriteLine("Llego a aaqui ");
-                    System.Console.WriteLine("Variables de la funcion");
-                    foreach (var item in Function_Variables)
-                    {
-                        System.Console.WriteLine(item.Key + "  " + item.Value);
-                    }
                     //Ahora con las variables procesa el cuerpo de la funcion
                     Parser Parse_Function = new Parser(New_Functions[function_name].Tokens_Body, Function_Variables, New_Functions);
                     object result = Parse_Function.Start();

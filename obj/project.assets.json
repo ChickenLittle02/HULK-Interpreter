@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\HULK-Interpreter.csproj",
+      "projectUniqueName": "C:\\RUBEN\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj",
       "projectName": "HULK-Interpreter",
-      "projectPath": "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\HULK-Interpreter.csproj",
+      "projectPath": "C:\\RUBEN\\HULK\\HULK-Interpreter\\HULK-Interpreter.csproj",
       "packagesPath": "C:\\Users\\ruben\\.nuget\\packages\\",
-      "outputPath": "C:\\RUBEN\\Moogle ultima version\\HULK-Interpreter\\obj\\",
+      "outputPath": "C:\\RUBEN\\HULK\\HULK-Interpreter\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ruben\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -1,8 +1,9 @@
-namespace Syntax_Analizer{
-    partial class Syntax{
-        private TokenType Numb()
-        {
-            actual_token.Show();
+namespace Syntax_Analizer
+{
+    partial class Syntax
+    {
+        private TokenType LowExpression()
+        {//Estas son las expresiones más bajas en la jerarquía
 
             if (actual_token.Type == TokenType.Number)
             {
@@ -10,94 +11,103 @@ namespace Syntax_Analizer{
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.SUM_Operator)
-            {
+            {//SOn las expresiones del tipo +Numero
                 Eat(TokenType.SUM_Operator);
                 TokenType result = Expression();
-                if (result != TokenType.Number) Error("Despues del operador + se espera un tipo Number");
-                Eat(TokenType.Number);
+                if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador + se espera un tipo Number");
+                Eat(result);
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.REST_Operator)
-            {
+            {//Son las expresiones del tipo -Numero
                 Eat(TokenType.REST_Operator);
                 TokenType result = Expression();
-                if (result != TokenType.Number) Error("Despues del operador - se espera un tipo Number");
-                Eat(TokenType.Number);
+                if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador - se espera un tipo Number");
+                Eat(result);
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.Boolean)
-            {
+            {//Son las expresiones del tipo true, false
                 Eat(TokenType.Boolean);
                 return TokenType.Boolean;
             }
             else if (actual_token.Type == TokenType.Quotes_Text)
-            {
+            {//SOn las expresiones del tipo "un texto"
                 Eat(TokenType.Quotes_Text);
                 return TokenType.Quotes_Text;
             }
             else if (actual_token.Value.ToString() == "if")
-            {
+            {//Son las expresiones if-else
+             //Que tienen la estructura if(expresion) expresion else expresion
+             //Y de la que se guarda la posicion de la expresion después del else y después de analizada toda la expresion if-else  
                 int if_token_pos = position;
-                Eat(TokenType.Keyword);
-                Eat(TokenType.LEFT_PARENTHESIS);
+                Eat(TokenType.Keyword);//if
+
+                Eat(TokenType.LEFT_PARENTHESIS);//Expresion condicional
                 TokenType decision = Expression();
-                if (decision != TokenType.Boolean) Error("Debe ir una expresion booleana");
+                if (decision != TokenType.Boolean && decision != TokenType.nul) Error("Debe ir una expresion booleana");
                 Eat(TokenType.RIGHT_PARENTHESIS);
-                TokenType result1 = Expression();
+
+                TokenType result1 = Expression();//Expresion despues de la condicion
+
                 if (!(actual_token.Value.ToString() == "else")) Error("Se esperaba un else");
-                Eat(TokenType.Keyword);
-                System.Console.WriteLine("EN el Lexer actual_token donde empieza la expresion despues del else es " + position + "  " + Token_Set[position].Value + "  " + actual_token.Value);
+                Eat(TokenType.Keyword);//else
+
                 int else_pos = position;//Posicion a partir de la cual tengo que parsear la expresion del else
-                TokenType result2 = Expression();
+
+                TokenType result2 = Expression();//Expresion despues del else
+
                 int final_if_else = position;
                 //Posicion en la que me quedo despues de parsear todo el if-else
+
                 Token_Set[if_token_pos].Set_Inicio_FInal(else_pos, final_if_else);
+                //Por defecto siempre se va a pasar el tipo del resultado1
                 return result1;
 
             }
             else if (actual_token.Type == TokenType.Let_Keyword)
-            {
+            {//Son las expresiones let-in
+             //Que tienen la forma let variable1 = expresion, variable2 = expresion, ..., variableN = expresion in expresion
+             //Donde cada variable solo existe dentro del let-in por tanto hay que agregarlas al diccionario de variables
+             //Y al terminar de porcesarlas eliminarlas del diccionario con variables 
                 Eat(TokenType.Let_Keyword);
                 Dictionary<string, TokenType> Var_Subset = Variables_Subset();
                 Variables_Set.Add(Var_Subset);
                 variable_subset++;
                 Eat(TokenType.In_Keyword);
                 TokenType result = Expression();
-                //System.Console.WriteLine("No he eliminado las variables");
                 Variables_Set.RemoveAt(variable_subset);
-                //System.Console.WriteLine("Ya eliminé las variables");
                 variable_subset--;
                 return result;
 
             }
             else if (actual_token.Type == TokenType.Not_Operator)
-            {
+            {//El operador bool de negacion, !
                 Eat(TokenType.Not_Operator);
                 TokenType result = Expression();
-                if (!(result == TokenType.Boolean)) Error("No se puede aplicar el operador ! a un tipo " + result.GetType());
-
+                if (!(result == TokenType.Boolean) && result != TokenType.nul) Error("No se puede aplicar el operador ! a un tipo " + result.GetType());
                 return result;
 
             }
             else if (actual_token.Type == TokenType.Identifier)
             {
                 Eat(TokenType.Identifier);
-                //Comprobar si es una variable
+                //Comprobar si es una funcion
+                if (IsNext(TokenType.LEFT_PARENTHESIS))
+                {
+                    //Es porque es una funcion
+                    string function_name = actual_token_value.ToString();
+                    bool Existence1 = Check_Function_Existence();
+                    if (!Existence1) Error("Esta funcion no existe");
+
+                    TokenType result = Choosing_Function(function_name);
+
+                    return result;
+                }
+                //si no es una funcion entonces es una variable
                 (TokenType, bool) Existence = Check_Var_Existence();
-
-                if (Existence.Item2)
-                {
-                    System.Console.WriteLine("la variable es " + Existence.Item1);
-                    return Existence.Item1;
-                }
-                else
-                {
-                    //Si no es una variable es una funcion
-                    //Por ahora vamos a pasar error porque no hemos implementado las funciones
-                    Error();
-                }
-
-                return Variables_Set[variable_subset][actual_token_value.ToString()];
+                if (!Existence.Item2) Error("La variable no existe en este entorno");
+                return Existence.Item1;
 
             }
             else
@@ -152,7 +162,6 @@ namespace Syntax_Analizer{
 
                 if (Variables_Set[i].ContainsKey(actual_token_value.ToString()))
                 {
-                    System.Console.WriteLine(actual_token_value + "  existe en " + i);
                     return (Variables_Set[i][actual_token_value.ToString()], true);
                 }
 

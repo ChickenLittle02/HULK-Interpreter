@@ -40,3 +40,17 @@ C:\RUBEN\Moogle ultima version\HULK-Interpreter\obj\Debug\net7.0\refint\HULK-Int
 C:\RUBEN\Moogle ultima version\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.pdb
 C:\RUBEN\Moogle ultima version\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.genruntimeconfig.cache
 C:\RUBEN\Moogle ultima version\HULK-Interpreter\obj\Debug\net7.0\ref\HULK-Interpreter.dll
+C:\RUBEN\HULK\HULK-Interpreter\bin\Debug\net7.0\HULK-Interpreter.exe
+C:\RUBEN\HULK\HULK-Interpreter\bin\Debug\net7.0\HULK-Interpreter.deps.json
+C:\RUBEN\HULK\HULK-Interpreter\bin\Debug\net7.0\HULK-Interpreter.runtimeconfig.json
+C:\RUBEN\HULK\HULK-Interpreter\bin\Debug\net7.0\HULK-Interpreter.dll
+C:\RUBEN\HULK\HULK-Interpreter\bin\Debug\net7.0\HULK-Interpreter.pdb
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.GeneratedMSBuildEditorConfig.editorconfig
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.AssemblyInfoInputs.cache
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.AssemblyInfo.cs
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.csproj.CoreCompileInputs.cache
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.dll
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\refint\HULK-Interpreter.dll
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.pdb
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\HULK-Interpreter.genruntimeconfig.cache
+C:\RUBEN\HULK\HULK-Interpreter\obj\Debug\net7.0\ref\HULK-Interpreter.dll

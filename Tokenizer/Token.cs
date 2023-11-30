@@ -1,8 +1,3 @@
-
-
-
-
-
 public enum TokenType
 {
     Number, //todos los valores numericos
@@ -12,19 +7,19 @@ public enum TokenType
     DIV_Operator, // /
     POW_Operator,//^
     CONCAT_OPERATOR, // @
-    RIGHT_PARENTHESIS,// (
-    LEFT_PARENTHESIS,// )
     Asignation_Operator,// =
     Equal_Operator,// ==
     Distinct,// /!=
     More_Than, //>
     More_Equal_Than, //>=
     Min_Than,// <
-    And_Operator,// &
-    Or_Operator,// |
-    Not_Operator,// /!
     Min_Equal_Than,// <=
     Arrow, //=>
+    And_Operator,// &
+    Or_Operator,// |
+    RIGHT_PARENTHESIS,// (
+    LEFT_PARENTHESIS,// )
+    Not_Operator,// /!
     Identifier, // todos los nombres
     Keyword, //Las palabras reservadas, number, string, bool, let, in, 
     Function_Keyword, //function
@@ -37,13 +32,15 @@ public enum TokenType
     Blank_Space,// " "
     EOT, //End of Tokens
     nul,
+    None,
 }
 
 
 
 public class Token
 {
-    public int inicio_else { get; private set; }
+    public int inicio_else { get; private set; } //Esto valores se ponen para guardar el final y el inicio de tokens
+                                                //Para determinados tokens que son compuestos como los if-else
     public int final_else { get; private set; }
     public TokenType Type { get; set; }
     public object Value { get; set; }

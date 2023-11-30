@@ -61,22 +61,20 @@ namespace Parser
                 actual_token = null;
             }
         }
-        public object Start()
+        private void Renovando_Funciones()
         {
-            object result;
-            if (actual_token.Type != TokenType.Function_Keyword) result = Expression();
-            else
+
+            if (New_Functions.Count != 0)
             {
-                Add_Function();
                 foreach (var item in New_Functions)
                 {
-                    System.Console.WriteLine("La funcion es " + item.Key);
-                    item.Value.Show_Variables();
-                    item.Value.Show_Body();
+                    Function_State.Add(item.Key);
                 }
-                result = "Funcion agregada con éxito";
             }
-
+        }
+        public object Start()
+        {
+            object  result = Expression();
             return result;
         }
 

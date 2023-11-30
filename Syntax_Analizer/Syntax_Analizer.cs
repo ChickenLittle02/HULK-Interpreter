@@ -11,21 +11,22 @@ namespace Syntax_Analizer
         object actual_token_value { get; set; }
         private int position { get; set; }
         int size { get; set; }
+        bool EstoyAnalizando { get; set; }//Esto es para cuando vaya a analizar sintacticamente el cuerpo de una funcion
         List<Dictionary<string, TokenType>> Variables_Set { get; set; }
         Dictionary<string, Function> New_Functions { get; set; }
         //Aqui se encuentran todas las funciones agregadas
-
-        //FUnction_State me dice el estado de la funcion, si es 0 es xq es del sistema y si es 1 es porque la agregué
-        List<(string, int)> Function_State = new List<(string, int)>
-    {("sqrt",0),("cos",0),("sin",0),("exp",0),("log",0),("rand",0)};
+        List<string> System_Function = new List<string> { "sqrt", "cos", "sin", "exp", "log", "rand" };
+        //Las funciones del sistema
         int variable_subset { get; set; }
-        public Syntax(List<Token> token_Set)
+
+        public Syntax(List<Token> token_Set, Dictionary<string, Function> new_functions)
         {
             Token_Set = token_Set;
             position = 0;
             size = Token_Set.Count();
             Variables_Set = new List<Dictionary<string, TokenType>>();
             variable_subset = -1;
+            New_Functions = new_functions;
             if (position != size)
             {
                 actual_token = Token_Set[position];
@@ -37,12 +38,16 @@ namespace Syntax_Analizer
         }
 
         public Syntax(List<Token> token_Set, Dictionary<string, TokenType> Variables, Dictionary<string, Function> Functions)
-        {//Para los casos en los que voy a procesar la funcion, que necesito que reciba las variables,
-         // las funciones que existen, y 
+        {
+            //Este constructor solo se utiliza en el casos en que voy a procesar la funcion, 
+            //que necesito que reciba las variables,
+            // las funciones que existen, y 
             Token_Set = token_Set;
             position = 0;
             size = Token_Set.Count();
             Variables_Set = new List<Dictionary<string, TokenType>>();
+            EstoyAnalizando = AreAllNul();//Para saber que en este caso estoy analizando la funcion
+
             Variables_Set.Add(Variables);
             variable_subset = 0;
             New_Functions = Functions;
@@ -54,7 +59,17 @@ namespace Syntax_Analizer
             {
                 actual_token = null;
             }
+            bool AreAllNul()
+            {
+                foreach (var item in Variables)
+                {
+                    if (item.Value == TokenType.nul) return true;
+                }
+
+                return false;
+            }
         }
+
 
 
         private void Error()
@@ -67,30 +82,27 @@ namespace Syntax_Analizer
         }
 
 
-        
 
         public TokenType Start()
         {
-            TokenType result = Expression();
-            System.Console.WriteLine("El resultado es ");
-            System.Console.WriteLine(result);
-
-            if (position == size)
-            {
-                System.Console.WriteLine("Parser exitoso");
-            }
+            TokenType result = TokenType.nul;
+            if (actual_token.Type == TokenType.Function_Keyword) Add_Function();
             else
             {
-                System.Console.WriteLine("Salio mal algo");
+                result = Expression();
+                Eat(TokenType.Semicolon);
+                if (actual_token.Type != TokenType.EOT) throw new Exception("Después de un punto y coma no puede haber ninguna otra expresion");
             }
 
+            
+
             return result;
+
         }
 
 
         private void Eat(TokenType Type)
         {
-            System.Console.WriteLine(actual_token.Type + "  " + actual_token.Value + " type debe ser " + Type);
             if (Type == actual_token.Type)
             {
                 actual_token_value = actual_token.Value;
@@ -104,14 +116,11 @@ namespace Syntax_Analizer
 
         private void GetNextToken()
         {
-            if (position == size - 1)
-            {
-                position++;
-                actual_token = new Token(TokenType.EOT, "EOT");
-            }
-            else if (position == size)
-            {
 
+            if (position >= size - 1)
+            {
+                actual_token = new Token(TokenType.None, " ");
+                position++;
             }
             else
             {
@@ -120,5 +129,13 @@ namespace Syntax_Analizer
             }
 
         }
+
+        private bool IsNext(TokenType Expected_Type)
+        {
+            System.Console.WriteLine(Expected_Type);
+            return actual_token.Type == Expected_Type;
+        }
+
+
     }
 }

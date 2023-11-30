@@ -30,11 +30,9 @@ namespace Lexer_Analizer
                 actual_char = text[position];
                 actual_TokenValue = "";
                 Start();
+                
             }
-            else
-            {
-                //  System.Console.WriteLine("Isn't possible to find a token, the code is empty");
-            }
+            else throw new Exception("Debe introducir algun código");
         }
         private void Error(string message)
         {
@@ -52,14 +50,14 @@ namespace Lexer_Analizer
         }
 
         public void Add_To_TokenSet(TokenType Type, object Value)
-        {
+        {//Agrega al conjunto de tokens un nuevo token
             Token Element = new Token(Type, Value);
             TokenSet.Add(Element);
 
         }
 
         public bool IsThat(char possible)
-        {
+        {//Comprueba si el char que esta en la posicion siguiente del string recibido es el esperado
             if (position + 1 != text_size && possible == Text[position + 1])
             {
                 return true;
@@ -83,7 +81,7 @@ namespace Lexer_Analizer
 
 
         public void GetNextChar()
-        {
+        {//Actualiza el siguiente char en caso de ser una posicion valida
             if (position == text_size - 1)
             {
                 position++;
@@ -95,7 +93,7 @@ namespace Lexer_Analizer
             }
         }
         public void Show_TokenSet()
-        {
+        {//Para mostrar el conjunto de tokens
             foreach (var item in TokenSet)
             {
                 item.Show();

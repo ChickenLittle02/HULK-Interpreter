@@ -114,18 +114,12 @@ namespace Lexer_Analizer{
                     GetNextChar();
                 }
 
-                if (Char.IsLetter(actual_char))
-                {
-                    // System.Console.WriteLine("Error, there should be a number");
-                    //Como puedo hacer para que en este punto el interprete deje de correr
-                    //Porque hubo un error
-                    return;
-                }
-
+                if (Char.IsLetter(actual_char)) Error("Después de un número no puede haber ninguna letra");
+                
                 Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
             }
             else if (actual_char == '"')
-            {
+            {//Agregando elementos de tipo string
                 actual_TokenValue = "";
                 actual_Tokentype = TokenType.Quotes_Text;
                 GetNextChar();
@@ -135,11 +129,8 @@ namespace Lexer_Analizer{
                     GetNextChar();
                 }
 
-                if (actual_char != '"')
-                {
-                    // System.Console.WriteLine("Error, falta " + '"');
-                    return;
-                }
+                if (actual_char != '"') Error("Toda cadena de texto debe concluir con "+'"');
+
 
                 Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
                 GetNextChar();
@@ -147,7 +138,6 @@ namespace Lexer_Analizer{
             }
             else if (actual_char == '_')
             {
-                // System.Console.WriteLine("Entro a que es una letra, o un _");
                 actual_TokenValue = "" + actual_char;
                 actual_Tokentype = TokenType.Identifier;
                 GetNextChar();
@@ -163,7 +153,6 @@ namespace Lexer_Analizer{
             else if (Char.IsLetter(actual_char))
             {
                 bool comprobando = true;
-                // System.Console.WriteLine("Entro a que es una letra");
                 actual_TokenValue = "" + actual_char;
                 GetNextChar();
 
@@ -173,12 +162,10 @@ namespace Lexer_Analizer{
                     actual_TokenValue += actual_char;
                     GetNextChar();
                 }
-                // System.Console.WriteLine("Comprobando es " + comprobando + " y el valor de ItsKeyword es " + ItsKeyword(actual_TokenValue));
-
+                
                 if (comprobando && ItsKeyword(actual_TokenValue))
                 {
-                    // System.Console.WriteLine("Entro a que es Keyword y el valor de ItsNotKeyword es " + ItsKeyword(actual_TokenValue));
-
+                
                     if (actual_TokenValue == "let") Add_To_TokenSet(TokenType.Let_Keyword, actual_TokenValue);
 
                     else if (actual_TokenValue == "in") Add_To_TokenSet(TokenType.In_Keyword, actual_TokenValue);
@@ -198,8 +185,7 @@ namespace Lexer_Analizer{
                 else if (comprobando && Convert.ToString(actual_TokenValue) == "false")
                     Add_To_TokenSet(TokenType.Boolean, actual_TokenValue);
 
-                else
-                    Add_To_TokenSet(TokenType.Identifier, actual_TokenValue);
+                else Add_To_TokenSet(TokenType.Identifier, actual_TokenValue);
 
 
             }
@@ -279,10 +265,8 @@ namespace Lexer_Analizer{
                     GetNextChar();
                 }
             }
-            else
-            {
-                Error(actual_char + " No es un token válido");
-            }
+            else Error(actual_char + " No es un token válido");
+            
 
         }
     }
