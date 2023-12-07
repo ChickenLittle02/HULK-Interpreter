@@ -95,6 +95,14 @@ namespace Parser{
             object result = Expression();
             return !Convert.ToBoolean(result);
         }
+        else if(actual_token.Type==TokenType.Keyword)
+        {
+            Eat(TokenType.Keyword);
+            string function_name = actual_token_value.ToString();
+            object result = Choosing_Function(function_name);
+
+                return result;
+        }
         else
         {
             Eat(TokenType.LEFT_PARENTHESIS);

@@ -27,13 +27,14 @@ namespace Parser
                     Eat(TokenType.LEFT_PARENTHESIS);
                     object numero1 = Expression();
                     Eat(TokenType.RIGHT_PARENTHESIS);
-                    return Math.Sin((double)numero1);
+                    return Math.Sin(((double)numero1/180)*Math.PI);
                 case "cos":
                     //Parsea la expresion coge el valor y pasaselo al metodo
                     Eat(TokenType.LEFT_PARENTHESIS);
                     object numero2 = Expression();
                     Eat(TokenType.RIGHT_PARENTHESIS);
-                    return Math.Cos((double)numero2);
+                    double number = (double)numero2*Math.PI/180;
+                    return Math.Cos(number);
 
 
                 case "sqrt":
@@ -77,8 +78,8 @@ namespace Parser
 
                     Eat(TokenType.LEFT_PARENTHESIS);
                     Eat(TokenType.RIGHT_PARENTHESIS);
-
-                    return 0;
+                    Random random = new Random();
+                    return random.NextDouble();
 
                 default:
                     Eat(TokenType.LEFT_PARENTHESIS);

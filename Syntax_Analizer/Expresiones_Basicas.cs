@@ -110,10 +110,24 @@ namespace Syntax_Analizer
                 return Existence.Item1;
 
             }
-            else
-            {
+            else if(actual_token.Type == TokenType.Keyword)
+            {//Aqui solo
                 if (actual_token.Value.ToString() == "else") Error();
                 if (actual_token.Value.ToString() == "in") Error();
+
+                Eat(TokenType.Keyword);
+                string function_name = actual_token_value.ToString();
+                    bool Existence1 = Check_Function_Existence();
+                    if (!Existence1) Error("Esta funcion no existe");
+
+                    TokenType result = Choosing_Function(function_name);
+
+                    return result;
+                
+
+            }
+            else
+            {
                 Eat(TokenType.LEFT_PARENTHESIS);
                 TokenType result = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS);

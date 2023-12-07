@@ -12,7 +12,7 @@ namespace Lexer_Analizer
         public int text_size;
         public TokenType actual_Tokentype { get; set; }
 
-        public string[] Keywords = { "let", "in", "number", "string", "bool", "if", "else", "function",
+        public string[] Keywords = { "let", "in", "if", "else", "function",
     "sqrt","cos","sin","exp","log","rand", "print"};
         public string actual_TokenValue { get; set; }
         public Token actual_Token { get; set; }

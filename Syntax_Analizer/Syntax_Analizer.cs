@@ -15,7 +15,7 @@ namespace Syntax_Analizer
         List<Dictionary<string, TokenType>> Variables_Set { get; set; }
         Dictionary<string, Function> New_Functions { get; set; }
         //Aqui se encuentran todas las funciones agregadas
-        List<string> System_Function = new List<string> { "sqrt", "cos", "sin", "exp", "log", "rand" };
+        List<string> System_Function = new List<string> {"print", "sqrt", "cos", "sin", "exp", "log", "rand" };
         //Las funciones del sistema
         int variable_subset { get; set; }
 
@@ -73,7 +73,9 @@ namespace Syntax_Analizer
 
 
         private void Error()
-        {
+        {System.Console.WriteLine("actual token es");
+            System.Console.WriteLine(actual_token.Value);
+            System.Console.WriteLine(actual_token.Type);
             throw new Exception("Invalid syntax");
         }
         private void Error(string message)
