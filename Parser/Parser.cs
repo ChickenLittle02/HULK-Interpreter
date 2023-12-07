@@ -123,7 +123,6 @@ namespace Parser
 
         private bool IsNext(TokenType Expected_Type)
         {
-            System.Console.WriteLine(Expected_Type);
             return actual_token.Type == Expected_Type;
         }
 

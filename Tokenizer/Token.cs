@@ -2,7 +2,8 @@ public enum TokenType
 {
     Number, //todos los valores numericos
     SUM_Operator,//+
-    REST_Operator,//-
+    SUBSTRACTION_Operator,//-
+    REST_Operator,//%
     MULT_Operator,//*
     DIV_Operator, // /
     POW_Operator,//^

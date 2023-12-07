@@ -36,7 +36,7 @@ namespace Lexer_Analizer
         }
         private void Error(string message)
         {
-            throw new Exception(message);
+            throw new Exception("! Lexical Error: "+message);
         }
         public void Start()
         {

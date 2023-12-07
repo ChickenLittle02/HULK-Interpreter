@@ -1,5 +1,7 @@
-namespace Lexer_Analizer{
-    public partial class Tokenizer{
+namespace Lexer_Analizer
+{
+    public partial class Tokenizer
+    {
         public void Add_Simple_Token()
         {
             //Este va comprobando si es uno de los token que solo estan compuestos por un char,
@@ -35,7 +37,15 @@ namespace Lexer_Analizer{
                     Add_To_TokenSet(TokenType.SUM_Operator, actual_char);
                     GetNextChar();
                     break;
+
                 case '-':
+
+                    // System.Console.WriteLine("Entro a que es un operador");
+                    Add_To_TokenSet(TokenType.SUBSTRACTION_Operator, actual_char);
+                    GetNextChar();
+                    break;
+
+                case '%':
 
                     // System.Console.WriteLine("Entro a que es un operador");
                     Add_To_TokenSet(TokenType.REST_Operator, actual_char);
@@ -47,52 +57,55 @@ namespace Lexer_Analizer{
                     // System.Console.WriteLine("Entro a que es un operador");
                     Add_To_TokenSet(TokenType.DIV_Operator, actual_char);
                     GetNextChar();
-
                     break;
+
                 case '*':
 
                     // System.Console.WriteLine("Entro a que es un operador");
                     Add_To_TokenSet(TokenType.MULT_Operator, actual_char);
                     GetNextChar();
                     break;
+
                 case '(':
                     // System.Console.WriteLine("Entro a que es un parentesis izquierdo");
                     Add_To_TokenSet(TokenType.LEFT_PARENTHESIS, actual_char);
                     GetNextChar();
-
                     break;
+
                 case ')':
 
                     // System.Console.WriteLine("Entro a que es un parentesis derecho");
                     Add_To_TokenSet(TokenType.RIGHT_PARENTHESIS, actual_char);
                     GetNextChar();
-
                     break;
+
                 case '^':
 
                     // System.Console.WriteLine("Entro a que es el simbolo de potencia");
                     Add_To_TokenSet(TokenType.POW_Operator, actual_char);
                     GetNextChar();
-
                     break;
+
                 case '@':
 
                     // System.Console.WriteLine("Entro a que es el operador de concatenar texto");
                     Add_To_TokenSet(TokenType.CONCAT_OPERATOR, actual_char);
                     GetNextChar();
-
                     break;
+
                 case '|':
 
                     // System.Console.WriteLine("Entro a que es el operador de concatenar texto");
                     Add_To_TokenSet(TokenType.Or_Operator, actual_char);
                     GetNextChar();
                     break;
+
                 case '&':
                     // System.Console.WriteLine("Entro a que es el operador de concatenar texto");
                     Add_To_TokenSet(TokenType.And_Operator, actual_char);
                     GetNextChar();
                     break;
+                    
                 default:
                     Add_Compose_Token();
                     break;
@@ -115,7 +128,7 @@ namespace Lexer_Analizer{
                 }
 
                 if (Char.IsLetter(actual_char)) Error("Después de un número no puede haber ninguna letra");
-                
+
                 Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
             }
             else if (actual_char == '"')
@@ -129,7 +142,7 @@ namespace Lexer_Analizer{
                     GetNextChar();
                 }
 
-                if (actual_char != '"') Error("Toda cadena de texto debe concluir con "+'"');
+                if (actual_char != '"') Error("Toda cadena de texto debe concluir con " + '"');
 
 
                 Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
@@ -162,10 +175,10 @@ namespace Lexer_Analizer{
                     actual_TokenValue += actual_char;
                     GetNextChar();
                 }
-                
+
                 if (comprobando && ItsKeyword(actual_TokenValue))
                 {
-                
+
                     if (actual_TokenValue == "let") Add_To_TokenSet(TokenType.Let_Keyword, actual_TokenValue);
 
                     else if (actual_TokenValue == "in") Add_To_TokenSet(TokenType.In_Keyword, actual_TokenValue);
@@ -266,9 +279,9 @@ namespace Lexer_Analizer{
                 }
             }
             else Error(actual_char + " No es un token válido");
-            
+
 
         }
     }
-    
+
 }

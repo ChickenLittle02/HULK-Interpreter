@@ -73,14 +73,12 @@ namespace Syntax_Analizer
 
 
         private void Error()
-        {System.Console.WriteLine("actual token es");
-            System.Console.WriteLine(actual_token.Value);
-            System.Console.WriteLine(actual_token.Type);
+        {
             throw new Exception("Invalid syntax");
         }
         private void Error(string message)
         {
-            throw new Exception(message);
+            throw new Exception("Syntax error: "+message);
         }
 
 
@@ -134,7 +132,6 @@ namespace Syntax_Analizer
 
         private bool IsNext(TokenType Expected_Type)
         {
-            System.Console.WriteLine(Expected_Type);
             return actual_token.Type == Expected_Type;
         }
 

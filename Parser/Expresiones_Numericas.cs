@@ -60,7 +60,7 @@ namespace Parser
         }
         private object Pow()
         {//Aqui se comprueba una posible potencia
-            object result = Numb();
+            object result = Rest();
             while (actual_token.Type == TokenType.POW_Operator)
             {
                 Eat(TokenType.POW_Operator);
@@ -68,5 +68,22 @@ namespace Parser
             }
             return result;
         }
+
+        private object Rest()
+        {//COmprueba que en caso de que el operador sea el de calcular resto, 
+            object result = Numb();
+            if (actual_token.Type == TokenType.REST_Operator)
+            {
+                
+                Eat(TokenType.REST_Operator);
+                result = Convert.ToDouble(result)%Convert.ToDouble(Numb());
+            }
+
+            return result;
+        }
+
+
+
+
     }
 }
