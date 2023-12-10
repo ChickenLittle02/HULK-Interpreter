@@ -18,9 +18,9 @@ namespace Syntax_Analizer
                 Eat(result,"");
                 return TokenType.Number;
             }
-            else if (actual_token.Type == TokenType.REST_Operator)
+            else if (actual_token.Type == TokenType.SUBSTRACTION_Operator)
             {//Son las expresiones del tipo -Numero
-                Eat(TokenType.REST_Operator,"");
+                Eat(TokenType.SUBSTRACTION_Operator,"");
                 TokenType result = Expression();
                 if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador - se espera un tipo Number");
                 Eat(result,"");

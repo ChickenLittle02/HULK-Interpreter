@@ -74,7 +74,7 @@ namespace Syntax_Analizer
 
                 }
 
-                if (Operador == 1)
+                else if (Operador == 1)
                 {//operador !=
                     Eat(TokenType.Distinct,"");
                     TokenType result2 = Text();
@@ -84,7 +84,7 @@ namespace Syntax_Analizer
                     Operador = ItsBoolOp(actual_token.Type);
 
                 }
-                if (Operador == 2)
+                else if (Operador == 2)
                 {//operador >
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador > tiene que estar precedido por un tipo number");
                     Eat(TokenType.More_Than,"");
@@ -93,7 +93,7 @@ namespace Syntax_Analizer
                     result = TokenType.Boolean;
                     Operador = ItsBoolOp(actual_token.Type);
                 }
-                if (Operador == 3)
+                else if (Operador == 3)
                 {//Operador >=
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador >= tiene que estar precedido por un tipo number");
                     Eat(TokenType.More_Equal_Than,"");
@@ -103,7 +103,7 @@ namespace Syntax_Analizer
                     Operador = ItsBoolOp(actual_token.Type);
 
                 }
-                if (Operador == 4)
+                else if (Operador == 4)
                 {//Operador <
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador < tiene que estar precedido por un tipo number");
                     Eat(TokenType.Min_Than,"");
@@ -112,7 +112,8 @@ namespace Syntax_Analizer
                     result = TokenType.Boolean;
                     Operador = ItsBoolOp(actual_token.Type);
                 }
-                if (Operador == 5)
+                else
+                // (Operador == 5)
                 {//Operador <=
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador <= tiene que estar precedido por un tipo number");
                     Eat(TokenType.Min_Equal_Than,"");

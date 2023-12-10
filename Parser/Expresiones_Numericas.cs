@@ -18,7 +18,7 @@ namespace Parser
         private object Form()
         {//Aqui se compreueba el caso en que sea una expresion de suma o resta
             object result = Exp();
-            while (actual_token.Type == TokenType.SUM_Operator || actual_token.Type == TokenType.REST_Operator)
+            while (actual_token.Type == TokenType.SUM_Operator || actual_token.Type == TokenType.SUBSTRACTION_Operator)
             {
 
                 if (actual_token.Type == TokenType.SUM_Operator)
@@ -27,9 +27,9 @@ namespace Parser
                     result = Convert.ToDouble(result) + Convert.ToDouble(Exp());
                 }
                 else
-                {//La opcion que queda es que sea REST_Operator
+                {//La opcion que queda es que sea SUBSTRACTION_Operator
 
-                    Eat(TokenType.REST_Operator);
+                    Eat(TokenType.SUBSTRACTION_Operator);
                     result = Convert.ToDouble(result) - Convert.ToDouble(Exp());
                 }
             }

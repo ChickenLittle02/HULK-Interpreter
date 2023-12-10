@@ -78,7 +78,7 @@ namespace Syntax_Analizer
         
         private void Error(string message)
         {
-            throw new Exception("Syntax error: "+message);
+            throw new Exception("Syntax error en token "+position+ " : "+message);
         }
 
 

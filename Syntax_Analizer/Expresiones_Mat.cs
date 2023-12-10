@@ -20,7 +20,7 @@ namespace Syntax_Analizer
         private TokenType Form()
         {
             TokenType result = Exp();
-            while (actual_token.Type == TokenType.SUM_Operator || actual_token.Type == TokenType.REST_Operator)
+            while (actual_token.Type == TokenType.SUM_Operator || actual_token.Type == TokenType.SUBSTRACTION_Operator)
             {//COmprueba que este sumando y restando tipos numericos
 
                 if (actual_token.Type == TokenType.SUM_Operator)
@@ -30,11 +30,11 @@ namespace Syntax_Analizer
                     TokenType result2 = Exp();
                     if (!(result2 is TokenType.Number && result != TokenType.nul)) Error("Despues de un simbolo de + se espera un tipo number");
                 }
-                if (actual_token.Type == TokenType.REST_Operator)
+                if (actual_token.Type == TokenType.SUBSTRACTION_Operator)
                 {
 
                     if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de - se espera un tipo number");
-                    Eat(TokenType.REST_Operator,"");
+                    Eat(TokenType.SUBSTRACTION_Operator,"");
                     TokenType result2 = Exp();
                     if (!(result2 is TokenType.Number) && result != TokenType.nul) Error("Despues de un simbolo de - se espera un tipo number");
                 }

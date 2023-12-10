@@ -14,9 +14,9 @@ namespace Parser{
             object result = Expression();
             return result;
         }
-        else if (actual_token.Type == TokenType.REST_Operator)
+        else if (actual_token.Type == TokenType.SUBSTRACTION_Operator)
         {
-            Eat(TokenType.REST_Operator);
+            Eat(TokenType.SUBSTRACTION_Operator);
             double result = 0 - Convert.ToDouble(Expression());
             return result;
         }
