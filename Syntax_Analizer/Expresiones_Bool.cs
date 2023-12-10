@@ -17,14 +17,14 @@ namespace Syntax_Analizer
                 {
                     if (actual_token.Type == TokenType.And_Operator)
                     {
-                        Eat(TokenType.And_Operator);
+                        Eat(TokenType.And_Operator,"");
                         TokenType result1 = Bool_Op();
                         if (result1 != TokenType.Boolean && result1 != TokenType.nul) Error("El operador & tiene que tener a continuacion un tipo bool");
 
                     }
                     else if (actual_token.Type == TokenType.Or_Operator)
                     {
-                        Eat(TokenType.Or_Operator);
+                        Eat(TokenType.Or_Operator,"");
                         TokenType result1 = Bool_Op();
                         if (result1 != TokenType.Boolean && result1 != TokenType.nul) Error("El operador | tiene que tener a continuacion un tipo bool");
                     }
@@ -66,7 +66,7 @@ namespace Syntax_Analizer
                 if (Operador == 0)
                 {//operador ==
 
-                    Eat(TokenType.Equal_Operator);
+                    Eat(TokenType.Equal_Operator,"");
                     TokenType result2 = Text();
                     if (result != result2 && result != TokenType.nul) Error("El operador == tiene que tener el mismo tipo en ambos miembros");
                     result = TokenType.Boolean;
@@ -76,7 +76,7 @@ namespace Syntax_Analizer
 
                 if (Operador == 1)
                 {//operador !=
-                    Eat(TokenType.Distinct);
+                    Eat(TokenType.Distinct,"");
                     TokenType result2 = Text();
                     if (result != result2 && result != TokenType.nul) Error("El operador != tiene que tener el mismo tipo en ambos miembros");
 
@@ -87,7 +87,7 @@ namespace Syntax_Analizer
                 if (Operador == 2)
                 {//operador >
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador > tiene que estar precedido por un tipo number");
-                    Eat(TokenType.More_Than);
+                    Eat(TokenType.More_Than,"");
                     TokenType result2 = Text();
                     if (result2 != TokenType.Number && result != TokenType.nul) Error("El operador > tiene que tener despues un tipo number");
                     result = TokenType.Boolean;
@@ -96,7 +96,7 @@ namespace Syntax_Analizer
                 if (Operador == 3)
                 {//Operador >=
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador >= tiene que estar precedido por un tipo number");
-                    Eat(TokenType.More_Equal_Than);
+                    Eat(TokenType.More_Equal_Than,"");
                     TokenType result2 = Text();
                     if (result2 != TokenType.Number && result != TokenType.nul) Error("El operador >= tiene que tener despues un tipo number");
                     result = TokenType.Boolean;
@@ -106,7 +106,7 @@ namespace Syntax_Analizer
                 if (Operador == 4)
                 {//Operador <
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador < tiene que estar precedido por un tipo number");
-                    Eat(TokenType.Min_Than);
+                    Eat(TokenType.Min_Than,"");
                     TokenType result2 = Text();
                     if (result2 != TokenType.Number && result != TokenType.nul) Error("El operador < tiene que tener despues un tipo number");
                     result = TokenType.Boolean;
@@ -115,7 +115,7 @@ namespace Syntax_Analizer
                 if (Operador == 5)
                 {//Operador <=
                     if (result != TokenType.Number && result != TokenType.nul) Error("El operador <= tiene que estar precedido por un tipo number");
-                    Eat(TokenType.Min_Equal_Than);
+                    Eat(TokenType.Min_Equal_Than,"");
                     TokenType result2 = Text();
                     if (result2 != TokenType.Number && result != TokenType.nul) Error("El operador <= tiene que tener despues un tipo number");
                     result = TokenType.Boolean;

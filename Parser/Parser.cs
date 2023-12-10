@@ -24,12 +24,12 @@ namespace Parser
             Token_Set = token_Set;
             position = 0;
             size = Token_Set.Count();
-            Variables_Set = new List<Dictionary<string, object>>
-        {
-            Var_Subset
-        };
+            variable_subset = -1;
 
-            variable_subset = 0;
+            Variables_Set = new List<Dictionary<string, object>>();
+            AddSystemVariables();
+            Variables_Set.Add(Var_Subset);
+            variable_subset++;
 
             New_Functions = new_functions;
             Renovando_Funciones();
@@ -50,6 +50,7 @@ namespace Parser
             size = Token_Set.Count();
             Variables_Set = new List<Dictionary<string, object>>();
             variable_subset = -1;
+            AddSystemVariables();
             New_Functions = new_functions;
             Renovando_Funciones();
             if (position != size)
@@ -74,7 +75,7 @@ namespace Parser
         }
         public object Start()
         {
-            object  result = Expression();
+            object result = Expression();
             return result;
         }
 
@@ -167,6 +168,16 @@ namespace Parser
                     return (Variables_Set[i][actual_token_value.ToString()], true);
             }
             return ("", false);
+        }
+
+
+        private void AddSystemVariables()
+        {
+            Dictionary<string,object> SystemVars = new Dictionary<string, object>();
+            SystemVars.Add("PI",Math.PI);
+            Variables_Set.Add(SystemVars);
+            variable_subset++;
+
         }
 
 

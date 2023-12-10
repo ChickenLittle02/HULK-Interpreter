@@ -7,33 +7,33 @@ namespace Syntax_Analizer
 
             if (actual_token.Type == TokenType.Number)
             {
-                Eat(TokenType.Number);
+                Eat(TokenType.Number,"");
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.SUM_Operator)
             {//SOn las expresiones del tipo +Numero
-                Eat(TokenType.SUM_Operator);
+                Eat(TokenType.SUM_Operator,"");
                 TokenType result = Expression();
                 if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador + se espera un tipo Number");
-                Eat(result);
+                Eat(result,"");
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.REST_Operator)
             {//Son las expresiones del tipo -Numero
-                Eat(TokenType.REST_Operator);
+                Eat(TokenType.REST_Operator,"");
                 TokenType result = Expression();
                 if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador - se espera un tipo Number");
-                Eat(result);
+                Eat(result,"");
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.Boolean)
             {//Son las expresiones del tipo true, false
-                Eat(TokenType.Boolean);
+                Eat(TokenType.Boolean,"");
                 return TokenType.Boolean;
             }
             else if (actual_token.Type == TokenType.Quotes_Text)
             {//SOn las expresiones del tipo "un texto"
-                Eat(TokenType.Quotes_Text);
+                Eat(TokenType.Quotes_Text,"");
                 return TokenType.Quotes_Text;
             }
             else if (actual_token.Value.ToString() == "if")
@@ -41,17 +41,17 @@ namespace Syntax_Analizer
              //Que tienen la estructura if(expresion) expresion else expresion
              //Y de la que se guarda la posicion de la expresion después del else y después de analizada toda la expresion if-else  
                 int if_token_pos = position;
-                Eat(TokenType.Keyword);//if
+                Eat(TokenType.Keyword,"");//if
 
-                Eat(TokenType.LEFT_PARENTHESIS);//Expresion condicional
+                Eat(TokenType.LEFT_PARENTHESIS,"Despues de una expresion if se espera un parentesis izquierdo (");//Expresion condicional
                 TokenType decision = Expression();
                 if (decision != TokenType.Boolean && decision != TokenType.nul) Error("Debe ir una expresion booleana");
-                Eat(TokenType.RIGHT_PARENTHESIS);
+                Eat(TokenType.RIGHT_PARENTHESIS,"Se esperaba un parentesis derecho )");
 
                 TokenType result1 = Expression();//Expresion despues de la condicion
 
                 if (!(actual_token.Value.ToString() == "else")) Error("Se esperaba un else");
-                Eat(TokenType.Keyword);//else
+                Eat(TokenType.Keyword,"");//else
 
                 int else_pos = position;//Posicion a partir de la cual tengo que parsear la expresion del else
 
@@ -70,11 +70,11 @@ namespace Syntax_Analizer
              //Que tienen la forma let variable1 = expresion, variable2 = expresion, ..., variableN = expresion in expresion
              //Donde cada variable solo existe dentro del let-in por tanto hay que agregarlas al diccionario de variables
              //Y al terminar de porcesarlas eliminarlas del diccionario con variables 
-                Eat(TokenType.Let_Keyword);
+                Eat(TokenType.Let_Keyword,"");
                 Dictionary<string, TokenType> Var_Subset = Variables_Subset();
                 Variables_Set.Add(Var_Subset);
                 variable_subset++;
-                Eat(TokenType.In_Keyword);
+                Eat(TokenType.In_Keyword,"Se esperaba un in");
                 TokenType result = Expression();
                 Variables_Set.RemoveAt(variable_subset);
                 variable_subset--;
@@ -83,7 +83,7 @@ namespace Syntax_Analizer
             }
             else if (actual_token.Type == TokenType.Not_Operator)
             {//El operador bool de negacion, !
-                Eat(TokenType.Not_Operator);
+                Eat(TokenType.Not_Operator,"");
                 TokenType result = Expression();
                 if (!(result == TokenType.Boolean) && result != TokenType.nul) Error("No se puede aplicar el operador ! a un tipo " + result.GetType());
                 return result;
@@ -91,7 +91,7 @@ namespace Syntax_Analizer
             }
             else if (actual_token.Type == TokenType.Identifier)
             {
-                Eat(TokenType.Identifier);
+                Eat(TokenType.Identifier,"");
                 //Comprobar si es una funcion
                 if (IsNext(TokenType.LEFT_PARENTHESIS))
                 {
@@ -112,10 +112,10 @@ namespace Syntax_Analizer
             }
             else if(actual_token.Type == TokenType.Keyword)
             {//Aqui solo
-                if (actual_token.Value.ToString() == "else") Error();
-                if (actual_token.Value.ToString() == "in") Error();
+                if (actual_token.Value.ToString() == "else") Error("Todo else debe estar precedido de un if");
+                if (actual_token.Value.ToString() == "in") Error("Todo in debe estar precedido de un let");
 
-                Eat(TokenType.Keyword);
+                Eat(TokenType.Keyword,"");
                 string function_name = actual_token_value.ToString();
                     bool Existence1 = Check_Function_Existence();
                     if (!Existence1) Error("Esta funcion no existe");
@@ -128,9 +128,9 @@ namespace Syntax_Analizer
             }
             else
             {
-                Eat(TokenType.LEFT_PARENTHESIS);
+                Eat(TokenType.LEFT_PARENTHESIS,"Se esperaba un (");
                 TokenType result = Expression();
-                Eat(TokenType.RIGHT_PARENTHESIS);
+                Eat(TokenType.RIGHT_PARENTHESIS,"Se esperaba un )");
                 return result;
             }
 
@@ -146,7 +146,7 @@ namespace Syntax_Analizer
 
             while (actual_token.Type == TokenType.Comma)
             {
-                Eat(TokenType.Comma);
+                Eat(TokenType.Comma,"");
                 Var = Variable();
                 Var_Set.Add(Var.Item1, Var.Item2);
             }
@@ -156,12 +156,9 @@ namespace Syntax_Analizer
 
         private (string, TokenType) Variable()
         {
-            Eat(TokenType.Identifier);
+            Eat(TokenType.Identifier,"Se esperaba un nombre de variable");
             string variable_name = actual_token_value.ToString();
-            Eat(TokenType.Asignation_Operator);
-
-
-            if (actual_token.Value == "let") Error();
+            Eat(TokenType.Asignation_Operator,"Se esperaba un =");
 
             TokenType value = Expression();
             return (variable_name, value);

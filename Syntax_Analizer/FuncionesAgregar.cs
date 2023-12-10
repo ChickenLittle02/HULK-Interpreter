@@ -47,8 +47,8 @@ namespace Syntax_Analizer
         {//las estructuras de las funciones son
          //function nombre_funcion(variables) => cuerpo_funcion;
 
-            Eat(TokenType.Function_Keyword);
-            Eat(TokenType.Identifier);
+            Eat(TokenType.Function_Keyword,"");
+            Eat(TokenType.Identifier,"Se esperaba un identificador de la funcion");
             string name = actual_token_value.ToString(); //nombre de la funcion
             bool Ya_Agregada = New_Functions.ContainsKey(name); //Esto significa que es una funcion agregada por el usuario
             if (System_Function.Contains(name)) Error("Ya existe una función del sistema con ese nombre");
@@ -85,10 +85,10 @@ namespace Syntax_Analizer
 
             void MakeFunction()
             {//Para construir la funcion necesito saber cuantas variables recibe y guardar los tokens del cuerpo
-                Eat(TokenType.LEFT_PARENTHESIS);
+                Eat(TokenType.LEFT_PARENTHESIS,"Se esperaba un (");
                 List<string> Var = Function_Variables();//Guarda los nombres de las variables que recibe en una lista
-                Eat(TokenType.RIGHT_PARENTHESIS);
-                Eat(TokenType.Arrow);
+                Eat(TokenType.RIGHT_PARENTHESIS,"Se esperaba un )");
+                Eat(TokenType.Arrow, "Se esperaba un =>");
                 List<Token> body = Make_Body();//Guarda los tokens del cuerpo en una lista
                 New = new Function(Var, body, TokenType.nul);//Crea la funcion con un valor de retorno nulo, porque no se cual es
             }
@@ -100,14 +100,14 @@ namespace Syntax_Analizer
                 //devuelve una lista con los nombres de las variables de la funcion
 
                 List<string> Variable_ALL = new List<string>();
-                Eat(TokenType.Identifier);
+                Eat(TokenType.Identifier,"Se esperaba un identificador de variable");
                 string variable = actual_token_value.ToString();
                 Variable_ALL.Add(variable);
 
                 while (actual_token.Type == TokenType.Comma)
                 {
-                    Eat(actual_token.Type);
-                    Eat(TokenType.Identifier);
+                    Eat(TokenType.Comma,"");
+                    Eat(TokenType.Identifier,"Se esperaba un identificador de variable");
                     variable = actual_token_value.ToString();
                     Variable_ALL.Add(variable);
                     VariablesParaComprobar.Add(variable, TokenType.nul);
@@ -134,7 +134,7 @@ namespace Syntax_Analizer
 
             if (actual_token.Type != TokenType.Semicolon) Error("EL útlimo token debe ser un punto y coma");
             Token_Body.Add(actual_token);//Se agrega el punto y coma
-            Eat(TokenType.Semicolon);
+            Eat(TokenType.Semicolon,"Se esperaba un ;");
 
             
             if(actual_token.Type != TokenType.EOT) Error("Después del punto y coma no puede haber ninguna otra expresión");

@@ -10,7 +10,7 @@ namespace Syntax_Analizer
             while (actual_token.Type == TokenType.CONCAT_OPERATOR)
             {//NO hay que comprobar tipos, pues en la jerarquia definida se pueden concatenar valores de diferentes tipos
 
-                Eat(TokenType.CONCAT_OPERATOR);
+                Eat(TokenType.CONCAT_OPERATOR,"");
                 TokenType result2 = Form();
             }
 
@@ -26,7 +26,7 @@ namespace Syntax_Analizer
                 if (actual_token.Type == TokenType.SUM_Operator)
                 {
                     if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de + se espera un tipo number");
-                    Eat(TokenType.SUM_Operator);
+                    Eat(TokenType.SUM_Operator,"");
                     TokenType result2 = Exp();
                     if (!(result2 is TokenType.Number && result != TokenType.nul)) Error("Despues de un simbolo de + se espera un tipo number");
                 }
@@ -34,7 +34,7 @@ namespace Syntax_Analizer
                 {
 
                     if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de - se espera un tipo number");
-                    Eat(TokenType.REST_Operator);
+                    Eat(TokenType.REST_Operator,"");
                     TokenType result2 = Exp();
                     if (!(result2 is TokenType.Number) && result != TokenType.nul) Error("Despues de un simbolo de - se espera un tipo number");
                 }
@@ -52,14 +52,14 @@ namespace Syntax_Analizer
                 if (actual_token.Type == TokenType.MULT_Operator)
                 {
                     if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de * se espera un tipo number");
-                    Eat(TokenType.MULT_Operator);
+                    Eat(TokenType.MULT_Operator,"");
                     TokenType result2 = Pow();
                     if (!(result2 is TokenType.Number) && result != TokenType.nul) Error("Despues de un simbolo de * se espera un tipo number");
                 }
                 if (actual_token.Type == TokenType.DIV_Operator)
                 {
                     if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de / se espera un tipo number");
-                    Eat(TokenType.DIV_Operator);
+                    Eat(TokenType.DIV_Operator,"");
                     TokenType result2 = Pow();
                     if (!(result2 is TokenType.Number) && result != TokenType.nul) Error("Despues de un simbolo de / se espera un tipo number");
                 }
@@ -72,7 +72,7 @@ namespace Syntax_Analizer
             if (actual_token.Type == TokenType.POW_Operator)
             {
                 if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de ^ se espera un tipo number");
-                Eat(TokenType.POW_Operator);
+                Eat(TokenType.POW_Operator,"");
 
                 TokenType result2 = Pow();
                 if (!(result2 is TokenType.Number) && result != TokenType.nul) Error("Despues de un simbolo de ^ se espera un tipo number");
@@ -86,7 +86,7 @@ namespace Syntax_Analizer
             if (actual_token.Type == TokenType.REST_Operator)
             {
                 if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de % se espera un tipo number");
-                Eat(TokenType.REST_Operator);
+                Eat(TokenType.REST_Operator,"");
 
                 TokenType result2 = LowExpression();
                 if (!(result2 is TokenType.Number) && result != TokenType.nul) Error("Despues de un simbolo de ^ se espera un tipo number");

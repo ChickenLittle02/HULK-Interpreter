@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Security.AccessControl;
 using System.Timers;
 using System.Xml.XPath;
@@ -25,7 +26,8 @@ namespace Syntax_Analizer
             position = 0;
             size = Token_Set.Count();
             Variables_Set = new List<Dictionary<string, TokenType>>();
-            variable_subset = -1;
+            variable_subset=-1;
+            AddSystemVariables();
             New_Functions = new_functions;
             if (position != size)
             {
@@ -47,9 +49,10 @@ namespace Syntax_Analizer
             size = Token_Set.Count();
             Variables_Set = new List<Dictionary<string, TokenType>>();
             EstoyAnalizando = AreAllNul();//Para saber que en este caso estoy analizando la funcion
-
+            variable_subset = -1;
+            AddSystemVariables();
             Variables_Set.Add(Variables);
-            variable_subset = 0;
+            variable_subset++;
             New_Functions = Functions;
             if (position != size)
             {
@@ -72,10 +75,7 @@ namespace Syntax_Analizer
 
 
 
-        private void Error()
-        {
-            throw new Exception("Invalid syntax");
-        }
+        
         private void Error(string message)
         {
             throw new Exception("Syntax error: "+message);
@@ -90,7 +90,7 @@ namespace Syntax_Analizer
             else
             {
                 result = Expression();
-                Eat(TokenType.Semicolon);
+                Eat(TokenType.Semicolon,"La expresión principal debe concluir con un punto y coma");
                 if (actual_token.Type != TokenType.EOT) throw new Exception("Después de un punto y coma no puede haber ninguna otra expresion");
             }
 
@@ -101,7 +101,7 @@ namespace Syntax_Analizer
         }
 
 
-        private void Eat(TokenType Type)
+        private void Eat(TokenType Type,string message)
         {
             if (Type == actual_token.Type)
             {
@@ -110,7 +110,7 @@ namespace Syntax_Analizer
             }
             else
             {
-                Error();
+                Error(message);
             }
         }
 
@@ -133,6 +133,15 @@ namespace Syntax_Analizer
         private bool IsNext(TokenType Expected_Type)
         {
             return actual_token.Type == Expected_Type;
+        }
+
+        private void AddSystemVariables()
+        {
+            Dictionary<string,TokenType> SystemVars = new Dictionary<string, TokenType>();
+            SystemVars.Add("PI",TokenType.Number);
+            Variables_Set.Add(SystemVars);
+            variable_subset++;
+
         }
 
 

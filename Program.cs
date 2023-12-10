@@ -9,11 +9,13 @@ namespace Run
         public static void Main(string[] args)
         {
             Dictionary<string, Function> Saving_Functions = new Dictionary<string, Function>();
-
-            while (true)
+            string[] prueba = {"function fib(n) => if(n>1) fib(n-1) + fib(n-2) else 1;","fib(3)"};
+            int i = 0;
+            while (i<prueba.Length)
             {
                 System.Console.Write("> ");
-                string texto = Console.ReadLine();
+                // string texto = Console.ReadLine();
+                string texto = prueba[i];
                 if (texto == "")
                 {
                     System.Console.WriteLine("Recuerde que si toca Enter con una entrada vacía es para salir,");
@@ -36,11 +38,12 @@ namespace Run
                     }
 
                     Saving_Functions = CheckSyntax.Get_New_Functions();
- 
+ i++;
                 }
                 catch (Exception text)
                 {
                     System.Console.WriteLine(text);
+                    i++;
                     continue;
                 }
 
