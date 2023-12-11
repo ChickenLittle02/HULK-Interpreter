@@ -100,6 +100,7 @@ namespace Parser
         }
 
 
+
         private Dictionary<string, object> Make_Function_Variables(string name)
         {//Va construyendo los valores de la variable
             Dictionary<string, object> Function_Variables = new Dictionary<string, object>();

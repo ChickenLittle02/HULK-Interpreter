@@ -11,6 +11,11 @@ public class Function
         ReturnType = returnType;
     }
 
+    public void CHangeBody(List<Token> tokens_Body)
+    {
+        Tokens_Body = tokens_Body;
+    }
+
     public void Show_Variables()
     {
 
@@ -71,8 +76,12 @@ namespace Syntax_Analizer
 
                     MakeFunction();
                     New_Functions[name] = New;
+                    LlenaVariablesParaComprobar();
                     Syntax FunctionCuerpo = new Syntax(New.Tokens_Body, VariablesParaComprobar, New_Functions);
+                    FunctionCuerpo.Start();
                     //Analiza sintácticamente el cuerpo de la funcion
+                    
+                New_Functions[name].CHangeBody(FunctionCuerpo.Token_Set);
                 }
                 else Error("No fue agregada su funcion");
             }
@@ -80,7 +89,10 @@ namespace Syntax_Analizer
             {
                 MakeFunction();
                 New_Functions.Add(name, New);
+                    LlenaVariablesParaComprobar();
                 Syntax FunctionCuerpo = new Syntax(New.Tokens_Body, VariablesParaComprobar, New_Functions);
+                FunctionCuerpo.Start();
+                New_Functions[name].CHangeBody(FunctionCuerpo.Token_Set);
             }
 
             void MakeFunction()
@@ -114,9 +126,18 @@ namespace Syntax_Analizer
 
                 }
 
+
                 return Variable_ALL;
 
             }
+                void LlenaVariablesParaComprobar()
+                {
+                    List<string> variables = New_Functions[name].Variables;
+                    foreach(var item in variables)
+                    {
+                        VariablesParaComprobar.Add(item,TokenType.nul);
+                    }
+                }
         }
 
 

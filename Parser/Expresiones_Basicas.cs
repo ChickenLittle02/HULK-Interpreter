@@ -36,7 +36,9 @@ namespace Parser{
         { 
               Token if_token = actual_token;
             Eat(TokenType.Keyword);
+              Eat(TokenType.LEFT_PARENTHESIS);
             object decision = Expression();
+            Eat(TokenType.RIGHT_PARENTHESIS);
             if (decision is true)
             {
                 object result = Expression();

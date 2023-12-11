@@ -74,28 +74,29 @@ namespace Parser{
 
                 Operador = ItsBoolOp(actual_token.Type);
             }
-            if (Operador == 2)
+            else if (Operador == 2)
             {
                 Eat(TokenType.More_Than);
                 object result2 = Text();
                 result = Convert.ToDouble(result) > Convert.ToDouble(result2);
                 Operador = ItsBoolOp(actual_token.Type);
             }
-            if (Operador == 3)
+            else if (Operador == 3)
             {
                 Eat(TokenType.More_Equal_Than);
                 object result2 = Text();
                 result = Convert.ToDouble(result) >= Convert.ToDouble(result2);
                 Operador = ItsBoolOp(actual_token.Type);
             }
-            if (Operador == 4)
+            else if (Operador == 4)
             {
                 Eat(TokenType.Min_Than);
                 object result2 = Text();
                 result = Convert.ToDouble(result) < Convert.ToDouble(result2);
                 Operador = ItsBoolOp(actual_token.Type);
             }
-            if (Operador == 5)
+            else
+            // (Operador == 5)
             {
                 Eat(TokenType.Min_Equal_Than);
                 object result2 = Text();

@@ -91,12 +91,13 @@ namespace Syntax_Analizer
                     Dictionary<string, TokenType> Function_Variables = Make_Function_Variables(function_name);
 
                     Eat(TokenType.RIGHT_PARENTHESIS,"Se esperaba un )");
-                    if (EstoyAnalizando) return New_Functions[function_name].ReturnType;
+                    return TokenType.nul;
+                    // if (EstoyAnalizando) return New_Functions[function_name].ReturnType;
 
-                    //Ahora con las variables procesa el cuerpo de la funcion, recibe los tokens, las variables y las funciones
-                    Syntax Syntax_Function = new Syntax(New_Functions[function_name].Tokens_Body, Function_Variables, New_Functions);
-                    TokenType resultado = Syntax_Function.Start();
-                    return resultado;
+                    // //Ahora con las variables procesa el cuerpo de la funcion, recibe los tokens, las variables y las funciones
+                    // Syntax Syntax_Function = new Syntax(New_Functions[function_name].Tokens_Body, Function_Variables, New_Functions);
+                    // TokenType resultado = Syntax_Function.Start();
+                    // return resultado;
 
             }
         }
