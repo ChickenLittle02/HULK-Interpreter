@@ -76,7 +76,6 @@ namespace Syntax_Analizer
 
                     MakeFunction();
                     New_Functions[name] = New;
-                    LlenaVariablesParaComprobar();
                     Syntax FunctionCuerpo = new Syntax(New.Tokens_Body, VariablesParaComprobar, New_Functions);
                     FunctionCuerpo.Start();
                     //Analiza sintácticamente el cuerpo de la funcion
@@ -89,7 +88,6 @@ namespace Syntax_Analizer
             {
                 MakeFunction();
                 New_Functions.Add(name, New);
-                    LlenaVariablesParaComprobar();
                 Syntax FunctionCuerpo = new Syntax(New.Tokens_Body, VariablesParaComprobar, New_Functions);
                 FunctionCuerpo.Start();
                 New_Functions[name].CHangeBody(FunctionCuerpo.Token_Set);
@@ -115,6 +113,7 @@ namespace Syntax_Analizer
                 Eat(TokenType.Identifier,"Se esperaba un identificador de variable");
                 string variable = actual_token_value.ToString();
                 Variable_ALL.Add(variable);
+                VariablesParaComprobar.Add(variable,TokenType.nul);
 
                 while (actual_token.Type == TokenType.Comma)
                 {

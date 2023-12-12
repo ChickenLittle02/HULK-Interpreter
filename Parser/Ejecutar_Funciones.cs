@@ -25,9 +25,10 @@ namespace Parser
                     //Parsea la expresion coge el valor y pasaselo al metodo
 
                     Eat(TokenType.LEFT_PARENTHESIS);
-                    object numero1 = Expression();
+                    double numero1;
+                    if(!double.TryParse(Expression().ToString(),out numero1)) Error("Se esperaba un tipo number");
                     Eat(TokenType.RIGHT_PARENTHESIS);
-                    return Math.Sin(((double)numero1/180)*Math.PI);
+                    return Math.Sin(numero1*Math.PI/180);
                 case "cos":
                     //Parsea la expresion coge el valor y pasaselo al metodo
                     Eat(TokenType.LEFT_PARENTHESIS);

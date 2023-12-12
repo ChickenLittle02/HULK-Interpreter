@@ -62,8 +62,7 @@ namespace Parser{
 
                 Operador = ItsBoolOp(actual_token.Type);
             }
-
-            if (Operador == 1)
+            else if (Operador == 1)
             {
                 Eat(TokenType.Distinct);
                 object result2 = Text();
@@ -95,8 +94,8 @@ namespace Parser{
                 result = Convert.ToDouble(result) < Convert.ToDouble(result2);
                 Operador = ItsBoolOp(actual_token.Type);
             }
-            else
-            // (Operador == 5)
+            else 
+            //if(Operador == 5)
             {
                 Eat(TokenType.Min_Equal_Than);
                 object result2 = Text();

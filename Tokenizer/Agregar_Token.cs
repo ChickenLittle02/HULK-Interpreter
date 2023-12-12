@@ -105,7 +105,7 @@ namespace Lexer_Analizer
                     Add_To_TokenSet(TokenType.And_Operator, actual_char);
                     GetNextChar();
                     break;
-                    
+
                 default:
                     Add_Compose_Token();
                     break;
@@ -127,7 +127,7 @@ namespace Lexer_Analizer
                     GetNextChar();
                 }
 
-                if (Char.IsLetter(actual_char)) Error("Después de un número no puede haber ninguna letra");
+                if (Char.IsLetter(actual_char)) Error("Después de un número no puede haber ninguna letra "+actual_TokenValue);
 
                 Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
             }
@@ -142,7 +142,7 @@ namespace Lexer_Analizer
                     GetNextChar();
                 }
 
-                if (actual_char != '"') Error("Toda cadena de texto debe concluir con " + '"');
+                if (actual_char != '"') Error(actual_TokenValue+"  Toda cadena de texto debe concluir con " + '"');
 
 
                 Add_To_TokenSet(actual_Tokentype, actual_TokenValue);
@@ -218,14 +218,12 @@ namespace Lexer_Analizer
                     actual_TokenValue = "=>";
                     Add_To_TokenSet(TokenType.Arrow, actual_TokenValue);
                     GetNextChar();
-
                 }
                 else
                 {
                     actual_TokenValue = "=";
                     Add_To_TokenSet(TokenType.Asignation_Operator, actual_TokenValue);
                     GetNextChar();
-
                 }
             }
             else if (actual_char == '!')
@@ -240,9 +238,11 @@ namespace Lexer_Analizer
 
                 }
                 else
+                {
                     actual_TokenValue = "!";
-                Add_To_TokenSet(TokenType.Not_Operator, actual_TokenValue);
-                GetNextChar(); Error(actual_char + " No es un token valido");
+                    Add_To_TokenSet(TokenType.Not_Operator, actual_TokenValue);
+                    GetNextChar();
+                }
             }
             else if (actual_char == '>')
             {

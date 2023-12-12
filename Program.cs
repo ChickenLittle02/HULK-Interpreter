@@ -9,15 +9,10 @@ namespace Run
         public static void Main(string[] args)
         {
             Dictionary<string, Function> Saving_Functions = new Dictionary<string, Function>();
-            string[] prueba = {"function fib(n) => if(n>1) fib(n-1) + fib(n-2) else 1;","fib(3);"};
-        //    string[] prueba ={"function prueba(a) => if(4%2==1) 1 else 2;"};
-            int i = 0;
-            while (i<prueba.Length)
-            // while(true)
+            while(true)
             {
                 System.Console.Write("> ");
-                // string texto = Console.ReadLine();
-                string texto = prueba[i];
+                string texto = Console.ReadLine();
                 if (texto == "")
                 {
                     System.Console.WriteLine("Recuerde que si toca Enter con una entrada vacía es para salir,");
@@ -31,8 +26,8 @@ namespace Run
                     Tokenizer Prueba = new Tokenizer(texto);
                     Syntax CheckSyntax = new Syntax(Prueba.TokenSet, Saving_Functions);
                     TokenType Result = CheckSyntax.Start();
- 
-                    if (Prueba.TokenSet.Count != 0&& Prueba.TokenSet[0].Type!=TokenType.Function_Keyword)
+                    
+                    if (Prueba.TokenSet[0].Type!=TokenType.Function_Keyword)
                     {//En caso de que esto ocurra es porque la entrada no fue una declaracion de funcion
                         Parser.Parser Interprete = new Parser.Parser(Prueba.TokenSet, Saving_Functions);
                         object result = Interprete.Start();
@@ -40,12 +35,10 @@ namespace Run
                     }
 
                     Saving_Functions = CheckSyntax.Get_New_Functions();
- i++;
                 }
                 catch (Exception text)
                 {
                     System.Console.WriteLine(text);
-                    i++;
                     continue;
                 }
 

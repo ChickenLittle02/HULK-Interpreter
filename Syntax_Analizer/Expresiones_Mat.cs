@@ -25,10 +25,10 @@ namespace Syntax_Analizer
 
                 if (actual_token.Type == TokenType.SUM_Operator)
                 {
-                    if (!(result is TokenType.Number) && result != TokenType.nul) Error("Antes de un simbolo de + se espera un tipo number");
+                    if (result!= TokenType.Number && result != TokenType.nul) Error("Antes de un simbolo de + se espera un tipo number");
                     Eat(TokenType.SUM_Operator,"");
                     TokenType result2 = Exp();
-                    if (!(result2 is TokenType.Number && result != TokenType.nul)) Error("Despues de un simbolo de + se espera un tipo number");
+                    if (result2!= TokenType.Number && result != TokenType.nul) Error("Despues de un simbolo de + se espera un tipo number");
                 }
                 if (actual_token.Type == TokenType.SUBSTRACTION_Operator)
                 {

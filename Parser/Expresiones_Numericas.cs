@@ -23,14 +23,28 @@ namespace Parser
 
                 if (actual_token.Type == TokenType.SUM_Operator)
                 {
+                    double left;
+                    if (!double.TryParse(result.ToString(), out left)) Error("Se esperaba un tipo number");
+
                     Eat(TokenType.SUM_Operator);
-                    result = Convert.ToDouble(result) + Convert.ToDouble(Exp());
+
+                    double right;
+                    if (!double.TryParse(Exp().ToString(), out right)) Error("Se esperaba un tipo number");
+
+                    result = left + right;
                 }
                 else
                 {//La opcion que queda es que sea SUBSTRACTION_Operator
 
+                    double left;
+                    if (!double.TryParse(result.ToString(), out left)) Error("Se esperaba un tipo number");
+
                     Eat(TokenType.SUBSTRACTION_Operator);
-                    result = Convert.ToDouble(result) - Convert.ToDouble(Exp());
+
+                    double right;
+                    if (!double.TryParse(Exp().ToString(), out right)) Error("Se esperaba un tipo number");
+
+                    result = left - right;
                 }
             }
             return result;
@@ -45,15 +59,30 @@ namespace Parser
 
                 if (actual_token.Type == TokenType.MULT_Operator)
                 {
+
+                    double left;
+                    if (!double.TryParse(result.ToString(), out left)) Error("Se esperaba un tipo number");
+
                     Eat(TokenType.MULT_Operator);
-                    result = Convert.ToDouble(result) * Convert.ToDouble(Pow());
+
+                    double right;
+                    if (!double.TryParse(Pow().ToString(), out right)) Error("Se esperaba un tipo number");
+
+                    result = left * right;
                 }
                 else
                 {//La opcion que quueda es qye sea DIV_Operator
+
+                    double numerador;
+                    if (!double.TryParse(result.ToString(), out numerador)) Error("Se esperaba un tipo number");
+
                     Eat(TokenType.DIV_Operator);
-                    double denominador = Convert.ToDouble(Pow());
+
+                    double denominador;
+                    if (!double.TryParse(Pow().ToString(), out denominador)) Error("Se esperaba un tipo number");
                     if (denominador == 0) Error("No es posible realizar una division por 0");
-                    result = Convert.ToDouble(result) / denominador;
+
+                    result = numerador / denominador;
                 }
             }
             return result;
@@ -63,8 +92,16 @@ namespace Parser
             object result = Rest();
             while (actual_token.Type == TokenType.POW_Operator)
             {
+                double basis;//base
+                if (!double.TryParse(result.ToString(), out basis)) Error("Se esperaba un tipo number");
+
                 Eat(TokenType.POW_Operator);
-                result = Math.Pow(Convert.ToDouble(result), Convert.ToDouble(Pow()));
+
+
+                double exponente;
+                if (!double.TryParse(Pow().ToString(), out exponente)) Error("Se esperaba un tipo number");
+
+                result = Math.Pow(basis, exponente);
             }
             return result;
         }
@@ -74,9 +111,16 @@ namespace Parser
             object result = Numb();
             if (actual_token.Type == TokenType.REST_Operator)
             {
-                
+                double left;
+                if (!double.TryParse(result.ToString(), out left)) Error("Se esperaba un tipo number");
+
                 Eat(TokenType.REST_Operator);
-                result = Convert.ToDouble(result)%Convert.ToDouble(Numb());
+
+                double right;
+                if (!double.TryParse(Exp().ToString(), out right)) Error("Se esperaba un tipo number");
+
+
+                result = left % right;
             }
 
             return result;

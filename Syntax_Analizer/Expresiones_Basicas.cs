@@ -13,17 +13,15 @@ namespace Syntax_Analizer
             else if (actual_token.Type == TokenType.SUM_Operator)
             {//SOn las expresiones del tipo +Numero
                 Eat(TokenType.SUM_Operator,"");
-                TokenType result = Expression();
+                TokenType result = LowExpression();
                 if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador + se espera un tipo Number");
-                Eat(result,"");
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.SUBSTRACTION_Operator)
             {//Son las expresiones del tipo -Numero
                 Eat(TokenType.SUBSTRACTION_Operator,"");
-                TokenType result = Expression();
+                TokenType result = LowExpression();
                 if (result != TokenType.Number && result != TokenType.nul) Error("Despues del operador - se espera un tipo Number");
-                Eat(result,"");
                 return TokenType.Number;
             }
             else if (actual_token.Type == TokenType.Boolean)
@@ -126,8 +124,10 @@ namespace Syntax_Analizer
                 
 
             }
-            else
+            else 
             {
+                if(actual_token.Type!=TokenType.LEFT_PARENTHESIS) Error("No es una expresion válida");
+
                 Eat(TokenType.LEFT_PARENTHESIS,"Se esperaba un (");
                 TokenType result = Expression();
                 Eat(TokenType.RIGHT_PARENTHESIS,"Se esperaba un )");
